@@ -4,13 +4,18 @@ node_modules/
 # Build outputs
 dist/
 .output/
-.nuxt/
-.cache/
+
+# Cloudflare Workers
+.wrangler/
+.dev.vars
 
 # Environment files
 .env
 .env.local
 .env.*.local
+
+# Drizzle
+drizzle/meta/
 
 # Logs
 npm-debug.log*
@@ -23,10 +28,6 @@ pnpm-debug.log*
 !.vscode/extensions.json
 .idea/
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.sw?
 
 # Temp files
