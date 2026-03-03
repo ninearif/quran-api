@@ -71,5 +71,5 @@ npm run deploy
 ## CORS
 
 Configured to allow requests from:
-- quran-public (Nuxt frontend)
-- quran-admin (Vue admin panel)
+- quran-web (Quran frontend)
+- quran-contributor (Translation Contributor tool)
