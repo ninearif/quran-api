@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/quran-th/quran-api/compare/v1.0.0...v1.1.0) (2026-03-04)
+
+
+### Features
+
+* utilize public assets bucket for quran word data ([872f26d](https://github.com/quran-th/quran-api/commit/872f26d654d02e2e0de4f621ace3469ff24683e9))
+
 # 1.0.0 (2026-03-04)
 
 
