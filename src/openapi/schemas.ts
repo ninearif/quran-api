@@ -44,7 +44,9 @@ export const LoginBodySchema = z
 export const LoginResponseSchema = z
   .object({
     success: z.literal(true),
-    token: z.string().openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+    token: z
+      .string()
+      .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
     contributor: ContributorPublicSchema,
   })
   .openapi("LoginResponse");
@@ -101,7 +103,10 @@ export const UserCreateBodySchema = z
     email: z.string().email().openapi({ example: "user@example.com" }),
     displayName: z.string().min(1).openapi({ example: "New User" }),
     password: z.string().min(6).openapi({ example: "password123" }),
-    role: z.enum(["contributor", "admin"]).default("contributor").openapi({ example: "contributor" }),
+    role: z
+      .enum(["contributor", "admin"])
+      .default("contributor")
+      .openapi({ example: "contributor" }),
   })
   .openapi("UserCreateBody");
 
@@ -133,7 +138,9 @@ export const VerseRowSchema = z
     source_id: z.number(),
     surah_number: z.number().openapi({ example: 1 }),
     verse_number: z.number().openapi({ example: 1 }),
-    content: z.string().openapi({ example: "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ" }),
+    content: z
+      .string()
+      .openapi({ example: "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ" }),
     translation: z.string().openapi({ example: "ด้วยพระนามของอัลลอฮ์" }),
     is_verified: z.number(),
     pending_count: z.number(),
@@ -145,7 +152,10 @@ export const VerseTranslationIdParamSchema = z.object({
   verseTranslationId: z
     .string()
     .regex(/^\d+$/, "Must be a numeric ID")
-    .openapi({ param: { name: "verseTranslationId", in: "path" }, example: "1" }),
+    .openapi({
+      param: { name: "verseTranslationId", in: "path" },
+      example: "1",
+    }),
 });
 
 export const VerseDetailSchema = z

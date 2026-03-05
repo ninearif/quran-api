@@ -28,7 +28,10 @@ type Variables = {
   contributor: JwtPayload;
 };
 
-const contributor = new OpenAPIHono<{ Bindings: Bindings; Variables: Variables }>();
+const contributor = new OpenAPIHono<{
+  Bindings: Bindings;
+  Variables: Variables;
+}>();
 
 contributor.use("/*", requireAuth);
 contributor.use("/*", requireActiveOnWrite);
@@ -73,7 +76,10 @@ contributor.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: z.array(VerseRowSchema) }),
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(VerseRowSchema),
+            }),
           },
         },
         description: "Verse list",
@@ -116,8 +122,11 @@ contributor.openapi(
     query += ` GROUP BY vt.id ORDER BY vt.surah_number, vt.verse_number LIMIT 200`;
 
     const result = await c.env.DB.prepare(query).all();
-    return c.json({ success: true as const, data: result.results as any[] }, 200);
-  }
+    return c.json(
+      { success: true as const, data: result.results as any[] },
+      200,
+    );
+  },
 );
 
 // ─── GET /contributor/verses/:verseTranslationId/contributions ────────────────
@@ -136,7 +145,10 @@ contributor.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: VerseWithContributionsSchema }),
+            schema: z.object({
+              success: z.literal(true),
+              data: VerseWithContributionsSchema,
+            }),
           },
         },
         description: "Verse and contributions",
@@ -163,13 +175,16 @@ contributor.openapi(
       JOIN quran_translations qt ON qt.surah_number = vt.surah_number AND qt.verse_number = vt.verse_number
       WHERE vt.id = ?
       LIMIT 1
-    `
+    `,
     )
       .bind(id)
       .first();
 
     if (!vtRow) {
-      return c.json({ success: false as const, message: "Verse not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Verse not found" },
+        404,
+      );
     }
 
     const db = drizzle(c.env.DB);
@@ -181,10 +196,13 @@ contributor.openapi(
       .all();
 
     return c.json(
-      { success: true as const, data: { verse: vtRow as any, contributions: history } },
-      200
+      {
+        success: true as const,
+        data: { verse: vtRow as any, contributions: history },
+      },
+      200,
     );
-  }
+  },
 );
 
 // ─── POST /contributor/contributions ─────────────────────────────────────────
@@ -206,7 +224,10 @@ contributor.openapi(
       201: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: z.record(z.string(), z.unknown()) }),
+            schema: z.object({
+              success: z.literal(true),
+              data: z.record(z.string(), z.unknown()),
+            }),
           },
         },
         description: "Contribution submitted",
@@ -233,13 +254,16 @@ contributor.openapi(
     const vtRow = await c.env.DB.prepare(
       `
       SELECT id, source_id FROM verse_translations WHERE id = ? LIMIT 1
-    `
+    `,
     )
       .bind(body.verseTranslationId)
       .first<{ id: number; source_id: number }>();
 
     if (!vtRow) {
-      return c.json({ success: false as const, message: "Verse not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Verse not found" },
+        404,
+      );
     }
 
     const [inserted] = await db
@@ -254,7 +278,7 @@ contributor.openapi(
       .returning();
 
     return c.json({ success: true as const, data: inserted as any }, 201);
-  }
+  },
 );
 
 // ─── GET /contributor/word-translations ───────────────────────────────────────
@@ -291,7 +315,10 @@ contributor.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: z.array(WordTranslationSchema) }),
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(WordTranslationSchema),
+            }),
           },
         },
         description: "Word translations for the verse",
@@ -316,14 +343,14 @@ contributor.openapi(
       .where(
         and(
           eq(wordTranslations.surahNumber, surahNumber),
-          eq(wordTranslations.verseNumber, verseNumber)
-        )
+          eq(wordTranslations.verseNumber, verseNumber),
+        ),
       )
       .orderBy(wordTranslations.wordPosition)
       .all();
 
     return c.json({ success: true as const, data: words as any[] }, 200);
-  }
+  },
 );
 
 // ─── POST /contributor/word-translations ──────────────────────────────────────
@@ -345,7 +372,10 @@ contributor.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: z.record(z.string(), z.unknown()) }),
+            schema: z.object({
+              success: z.literal(true),
+              data: z.record(z.string(), z.unknown()),
+            }),
           },
         },
         description: "Word translation updated",
@@ -353,7 +383,10 @@ contributor.openapi(
       201: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: z.record(z.string(), z.unknown()) }),
+            schema: z.object({
+              success: z.literal(true),
+              data: z.record(z.string(), z.unknown()),
+            }),
           },
         },
         description: "Word translation created",
@@ -366,7 +399,8 @@ contributor.openapi(
   }),
   async (c) => {
     const body = c.req.valid("json");
-    const { surahNumber, verseNumber, wordPosition, arabicText, thaiMeaning } = body;
+    const { surahNumber, verseNumber, wordPosition, arabicText, thaiMeaning } =
+      body;
     const payload = c.get("contributor");
     const db = drizzle(c.env.DB);
 
@@ -378,8 +412,8 @@ contributor.openapi(
           eq(wordTranslations.surahNumber, surahNumber),
           eq(wordTranslations.verseNumber, verseNumber),
           eq(wordTranslations.wordPosition, wordPosition),
-          eq(wordTranslations.contributorId, payload.sub)
-        )
+          eq(wordTranslations.contributorId, payload.sub),
+        ),
       )
       .limit(1);
 
@@ -405,7 +439,7 @@ contributor.openapi(
       .returning();
 
     return c.json({ success: true as const, data: inserted as any }, 201);
-  }
+  },
 );
 
 // ─── GET /contributor/footnotes ───────────────────────────────────────────────
@@ -433,7 +467,10 @@ contributor.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: z.array(FootnoteSchema) }),
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(FootnoteSchema),
+            }),
           },
         },
         description: "Footnote list",
@@ -457,13 +494,16 @@ contributor.openapi(
       FROM translation_footnotes
       WHERE verse_translation_id = ?
       ORDER BY footnote_number ASC
-    `
+    `,
     )
       .bind(verseTranslationId)
       .all();
 
-    return c.json({ success: true as const, data: result.results as any[] }, 200);
-  }
+    return c.json(
+      { success: true as const, data: result.results as any[] },
+      200,
+    );
+  },
 );
 
 // ─── POST /contributor/footnotes ──────────────────────────────────────────────
@@ -473,7 +513,8 @@ contributor.openapi(
     method: "post",
     path: "/footnotes",
     tags: ["Contributor"],
-    summary: "Create or update a footnote (upsert by verseTranslationId + footnoteNumber)",
+    summary:
+      "Create or update a footnote (upsert by verseTranslationId + footnoteNumber)",
     security: [{ bearerAuth: [] }],
     request: {
       body: {
@@ -485,7 +526,10 @@ contributor.openapi(
       201: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: FootnoteSchema }),
+            schema: z.object({
+              success: z.literal(true),
+              data: FootnoteSchema,
+            }),
           },
         },
         description: "Footnote created or updated",
@@ -503,12 +547,17 @@ contributor.openapi(
   async (c) => {
     const { verseTranslationId, footnoteNumber, text } = c.req.valid("json");
 
-    const vt = await c.env.DB.prepare(`SELECT id FROM verse_translations WHERE id = ? LIMIT 1`)
+    const vt = await c.env.DB.prepare(
+      `SELECT id FROM verse_translations WHERE id = ? LIMIT 1`,
+    )
       .bind(verseTranslationId)
       .first();
 
     if (!vt) {
-      return c.json({ success: false as const, message: "Verse translation not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Verse translation not found" },
+        404,
+      );
     }
 
     await c.env.DB.prepare(
@@ -516,7 +565,7 @@ contributor.openapi(
       INSERT INTO translation_footnotes (verse_translation_id, footnote_number, text)
       VALUES (?, ?, ?)
       ON CONFLICT(verse_translation_id, footnote_number) DO UPDATE SET text = excluded.text
-    `
+    `,
     )
       .bind(verseTranslationId, footnoteNumber, text.trim())
       .run();
@@ -526,13 +575,13 @@ contributor.openapi(
       SELECT id, footnote_number, text
       FROM translation_footnotes
       WHERE verse_translation_id = ? AND footnote_number = ?
-    `
+    `,
     )
       .bind(verseTranslationId, footnoteNumber)
       .first<{ id: number; footnote_number: number; text: string }>();
 
     return c.json({ success: true as const, data: row! }, 201);
-  }
+  },
 );
 
 // ─── DELETE /contributor/footnotes/:id ────────────────────────────────────────
@@ -566,18 +615,25 @@ contributor.openapi(
     const { id } = c.req.valid("param");
     const numericId = parseInt(id);
 
-    const row = await c.env.DB.prepare(`SELECT id FROM translation_footnotes WHERE id = ? LIMIT 1`)
+    const row = await c.env.DB.prepare(
+      `SELECT id FROM translation_footnotes WHERE id = ? LIMIT 1`,
+    )
       .bind(numericId)
       .first();
 
     if (!row) {
-      return c.json({ success: false as const, message: "Footnote not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Footnote not found" },
+        404,
+      );
     }
 
-    await c.env.DB.prepare(`DELETE FROM translation_footnotes WHERE id = ?`).bind(numericId).run();
+    await c.env.DB.prepare(`DELETE FROM translation_footnotes WHERE id = ?`)
+      .bind(numericId)
+      .run();
 
     return c.json({ success: true as const, message: "Footnote deleted" }, 200);
-  }
+  },
 );
 
 // ─── GET /contributor/issues ──────────────────────────────────────────────────
@@ -623,8 +679,11 @@ contributor.openapi(
     `;
 
     const result = await c.env.DB.prepare(query).all();
-    return c.json({ success: true as const, data: result.results as any[] }, 200);
-  }
+    return c.json(
+      { success: true as const, data: result.results as any[] },
+      200,
+    );
+  },
 );
 
 export default contributor;

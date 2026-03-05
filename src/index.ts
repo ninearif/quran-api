@@ -47,9 +47,12 @@ const app = new OpenAPIHono<{ Bindings: Bindings }>({
         {
           success: false as const,
           message: "Validation error",
-          errors: result.error.issues.map((i) => ({ path: i.path.join("."), message: i.message })),
+          errors: result.error.issues.map((i) => ({
+            path: i.path.join("."),
+            message: i.message,
+          })),
         },
-        422
+        422,
       );
     }
   },
@@ -87,8 +90,8 @@ app.openapi(
         status: "online",
         timestamp: new Date().toISOString(),
       },
-      200
-    )
+      200,
+    ),
 );
 
 // ─── GET /surahs ──────────────────────────────────────────────────────────────
@@ -123,8 +126,8 @@ app.openapi(
         data: surahs as any[],
         timestamp: new Date().toISOString(),
       },
-      200
-    )
+      200,
+    ),
 );
 
 // ─── GET /surahs/:id ──────────────────────────────────────────────────────────
@@ -147,7 +150,10 @@ app.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: SurahWithPaginatedVersesSchema }),
+            schema: z.object({
+              success: z.literal(true),
+              data: SurahWithPaginatedVersesSchema,
+            }),
           },
         },
         description: "Surah with paginated verses",
@@ -169,7 +175,10 @@ app.openapi(
     const surah = surahs.find((s) => s.id === numericId);
 
     if (!surah) {
-      return c.json({ success: false as const, message: "Surah not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Surah not found" },
+        404,
+      );
     }
 
     try {
@@ -214,7 +223,7 @@ app.openapi(
         WHERE vt.source_id = ? AND vt.surah_number = ?
         ORDER BY vt.verse_number ASC
         LIMIT ? OFFSET ?
-      `
+      `,
       )
         .bind(sourceId, numericId, limit, offset)
         .all<{
@@ -242,10 +251,14 @@ app.openapi(
               AND vt.verse_number > ? AND vt.verse_number <= ?
           )
           ORDER BY tf.verse_translation_id, tf.footnote_number ASC
-        `
+        `,
         )
           .bind(sourceId, numericId, verseStart, verseEnd)
-          .all<{ verse_translation_id: number; footnote_number: number; text: string }>();
+          .all<{
+            verse_translation_id: number;
+            footnote_number: number;
+            text: string;
+          }>();
 
         fnRows.results.forEach((fn) => {
           if (!footnoteMap.has(fn.verse_translation_id)) {
@@ -258,7 +271,9 @@ app.openapi(
       }
 
       // Merge Arabic content + Thai translation + footnotes per verse
-      const translationByVerse = new Map(vtRows.results.map((r) => [r.verse_number, r]));
+      const translationByVerse = new Map(
+        vtRows.results.map((r) => [r.verse_number, r]),
+      );
 
       const verses = arabicVerses.map((av) => {
         const vt = translationByVerse.get(av.verseNumber);
@@ -288,13 +303,16 @@ app.openapi(
           success: true as const,
           data: { ...surah, sourceId, verses, pagination } as any,
         },
-        200
+        200,
       );
     } catch (e) {
       console.error(e);
-      return c.json({ success: false as const, message: "Failed to fetch verses" }, 500);
+      return c.json(
+        { success: false as const, message: "Failed to fetch verses" },
+        500,
+      );
     }
-  }
+  },
 );
 
 // ─── GET /verse-words/:surahId ─────────────────────────────────────────────────
@@ -337,22 +355,30 @@ app.get("/surahs/:id/mushaf-pages", async (c) => {
   }
 
   try {
-    const obj = await c.env.ASSETS_BUCKET.get("quran-pages/surah-page-mapping.json");
+    const obj = await c.env.ASSETS_BUCKET.get(
+      "quran-pages/surah-page-mapping.json",
+    );
 
     if (!obj) {
-      return c.json({ success: false, message: "Failed to fetch page mapping" }, 500);
+      return c.json(
+        { success: false, message: "Failed to fetch page mapping" },
+        500,
+      );
     }
 
     const mapping = await obj.json<Record<string, MushafPageEntry[]>>();
     const pages = mapping[String(numericId)];
 
     if (!pages) {
-      return c.json({ success: false, message: "Surah page mapping not found" }, 404);
+      return c.json(
+        { success: false, message: "Surah page mapping not found" },
+        404,
+      );
     }
 
     return c.json({ success: true, data: pages });
   } catch (e) {
-    console.error('Error fetching Mushaf page mapping:', e);
+    console.error("Error fetching Mushaf page mapping:", e);
     return c.json({ success: false, message: "Server error" }, 500);
   }
 });
@@ -397,11 +423,14 @@ app.openapi(
     } catch (e) {
       console.error(e);
       return c.json(
-        { success: false as const, message: "Failed to fetch translation sources" },
-        500
+        {
+          success: false as const,
+          message: "Failed to fetch translation sources",
+        },
+        500,
       );
     }
-  }
+  },
 );
 
 // ─── Sub-routers ──────────────────────────────────────────────────────────────

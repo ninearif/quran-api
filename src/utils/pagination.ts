@@ -41,7 +41,11 @@ export function parsePagination(query: { page?: number; pageSize?: number }) {
   return { page, pageSize, offset };
 }
 
-export function buildPaginationMeta(page: number, pageSize: number, total: number): PaginationMeta {
+export function buildPaginationMeta(
+  page: number,
+  pageSize: number,
+  total: number,
+): PaginationMeta {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   return {
     page,
@@ -53,7 +57,12 @@ export function buildPaginationMeta(page: number, pageSize: number, total: numbe
   };
 }
 
-export function paginatedResponse<T>(data: T[], page: number, pageSize: number, total: number) {
+export function paginatedResponse<T>(
+  data: T[],
+  page: number,
+  pageSize: number,
+  total: number,
+) {
   return {
     success: true as const,
     data,

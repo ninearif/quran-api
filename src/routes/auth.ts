@@ -66,19 +66,28 @@ auth.openapi(
       .limit(1);
 
     if (!contributor || !contributor.isActive) {
-      return c.json({ success: false as const, message: "Invalid credentials" }, 401);
+      return c.json(
+        { success: false as const, message: "Invalid credentials" },
+        401,
+      );
     }
 
     if (!contributor.passwordHash) {
       return c.json(
-        { success: false as const, message: "Password login not available for this account" },
-        400
+        {
+          success: false as const,
+          message: "Password login not available for this account",
+        },
+        400,
       );
     }
 
     const valid = await verifyPassword(body.password, contributor.passwordHash);
     if (!valid) {
-      return c.json({ success: false as const, message: "Invalid credentials" }, 401);
+      return c.json(
+        { success: false as const, message: "Invalid credentials" },
+        401,
+      );
     }
 
     await db
@@ -92,7 +101,7 @@ auth.openapi(
         email: contributor.email,
         role: contributor.role as "contributor" | "admin",
       },
-      c.env.JWT_SECRET
+      c.env.JWT_SECRET,
     );
 
     return c.json(
@@ -106,9 +115,9 @@ auth.openapi(
           role: contributor.role as "contributor" | "admin",
         },
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 // ─── GET /auth/me ─────────────────────────────────────────────────────────────
@@ -155,9 +164,9 @@ auth.openapi(
           role: payload.role,
         },
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 // ─── POST /auth/setup ─────────────────────────────────────────────────────────
@@ -167,7 +176,8 @@ auth.openapi(
     method: "post",
     path: "/setup",
     tags: ["Auth"],
-    summary: "Create initial admin account (one-time setup, fails if any contributor exists)",
+    summary:
+      "Create initial admin account (one-time setup, fails if any contributor exists)",
     request: {
       body: {
         content: { "application/json": { schema: SetupBodySchema } },
@@ -191,10 +201,16 @@ auth.openapi(
   }),
   async (c) => {
     const db = drizzle(c.env.DB);
-    const existing = await db.select({ id: contributors.id }).from(contributors).limit(1);
+    const existing = await db
+      .select({ id: contributors.id })
+      .from(contributors)
+      .limit(1);
 
     if (existing.length > 0) {
-      return c.json({ success: false as const, message: "Setup already complete" }, 403);
+      return c.json(
+        { success: false as const, message: "Setup already complete" },
+        403,
+      );
     }
 
     const body = c.req.valid("json");
@@ -208,8 +224,11 @@ auth.openapi(
       passwordHash: hash,
     });
 
-    return c.json({ success: true as const, message: "Admin account created" }, 200);
-  }
+    return c.json(
+      { success: true as const, message: "Admin account created" },
+      200,
+    );
+  },
 );
 
 export default auth;

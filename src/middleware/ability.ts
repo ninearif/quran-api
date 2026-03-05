@@ -1,6 +1,11 @@
 import type { Context, Next } from "hono";
 import { verifyToken, type JwtPayload } from "../utils/jwt";
-import { defineAbilitiesFor, type Action, type Subject, type Role } from "../permissions";
+import {
+  defineAbilitiesFor,
+  type Action,
+  type Subject,
+  type Role,
+} from "../permissions";
 
 type Bindings = {
   DB: D1Database;
@@ -15,7 +20,7 @@ type Variables = {
 export function requireAbility(action: Action, subject: Subject) {
   return async (
     c: Context<{ Bindings: Bindings; Variables: Variables }>,
-    next: Next
+    next: Next,
   ) => {
     let role: Role = "guest";
     let payload: JwtPayload | null = null;
@@ -37,7 +42,10 @@ export function requireAbility(action: Action, subject: Subject) {
       if (!payload) {
         return c.json({ success: false, message: "Unauthorized" }, 401);
       }
-      return c.json({ success: false, message: "Forbidden: insufficient permissions" }, 403);
+      return c.json(
+        { success: false, message: "Forbidden: insufficient permissions" },
+        403,
+      );
     }
 
     return next();

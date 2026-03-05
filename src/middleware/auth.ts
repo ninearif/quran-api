@@ -13,7 +13,7 @@ type Variables = {
 
 export async function requireAuth(
   c: Context<{ Bindings: Bindings; Variables: Variables }>,
-  next: Next
+  next: Next,
 ) {
   const authHeader = c.req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -33,7 +33,7 @@ export async function requireAuth(
 
 export async function requireAdmin(
   c: Context<{ Bindings: Bindings; Variables: Variables }>,
-  next: Next
+  next: Next,
 ) {
   const authHeader = c.req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -48,7 +48,10 @@ export async function requireAdmin(
   }
 
   if (payload.role !== "admin") {
-    return c.json({ success: false, message: "Forbidden: admin access required" }, 403);
+    return c.json(
+      { success: false, message: "Forbidden: admin access required" },
+      403,
+    );
   }
 
   c.set("contributor", payload);
@@ -57,7 +60,7 @@ export async function requireAdmin(
 
 export async function requireActiveOnWrite(
   c: Context<{ Bindings: Bindings; Variables: Variables }>,
-  next: Next
+  next: Next,
 ) {
   if (["GET", "HEAD", "OPTIONS"].includes(c.req.method)) {
     return next();
@@ -65,8 +68,10 @@ export async function requireActiveOnWrite(
 
   const payload = c.get("contributor");
   const row = await c.env.DB.prepare(
-    "SELECT is_active FROM contributors WHERE id = ? LIMIT 1"
-  ).bind(payload.sub).first<{ is_active: number }>();
+    "SELECT is_active FROM contributors WHERE id = ? LIMIT 1",
+  )
+    .bind(payload.sub)
+    .first<{ is_active: number }>();
 
   if (row?.is_active !== 1) {
     return c.json({ success: false, message: "Account deactivated" }, 403);

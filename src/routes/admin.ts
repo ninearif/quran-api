@@ -98,8 +98,11 @@ admin.openapi(
       LIMIT 100
     `;
     const result = await c.env.DB.prepare(query).all();
-    return c.json({ success: true as const, data: result.results as any[] }, 200);
-  }
+    return c.json(
+      { success: true as const, data: result.results as any[] },
+      200,
+    );
+  },
 );
 
 // ─── POST /admin/contributions/:id/approve ────────────────────────────────────
@@ -147,17 +150,26 @@ admin.openapi(
       .limit(1);
 
     if (!contribution) {
-      return c.json({ success: false as const, message: "Contribution not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Contribution not found" },
+        404,
+      );
     }
 
     if (contribution.status !== "pending") {
-      return c.json({ success: false as const, message: "Contribution is not pending" }, 400);
+      return c.json(
+        { success: false as const, message: "Contribution is not pending" },
+        400,
+      );
     }
 
     if (!contribution.verseTranslationId) {
       return c.json(
-        { success: false as const, message: "Contribution has no associated verse translation" },
-        400
+        {
+          success: false as const,
+          message: "Contribution has no associated verse translation",
+        },
+        400,
       );
     }
 
@@ -169,8 +181,11 @@ admin.openapi(
 
     if (!verse) {
       return c.json(
-        { success: false as const, message: "Associated verse translation not found" },
-        404
+        {
+          success: false as const,
+          message: "Associated verse translation not found",
+        },
+        404,
       );
     }
 
@@ -208,9 +223,9 @@ admin.openapi(
         success: true as const,
         message: "Contribution approved and translation updated",
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 // ─── POST /admin/contributions/:id/reject ─────────────────────────────────────
@@ -254,7 +269,10 @@ admin.openapi(
       .limit(1);
 
     if (!contribution) {
-      return c.json({ success: false as const, message: "Contribution not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Contribution not found" },
+        404,
+      );
     }
 
     await db
@@ -262,8 +280,11 @@ admin.openapi(
       .set({ status: "rejected" })
       .where(eq(contributions.id, numericId));
 
-    return c.json({ success: true as const, message: "Contribution rejected" }, 200);
-  }
+    return c.json(
+      { success: true as const, message: "Contribution rejected" },
+      200,
+    );
+  },
 );
 
 // ─── GET /admin/word-queue ────────────────────────────────────────────────────
@@ -310,8 +331,11 @@ admin.openapi(
       LIMIT 100
     `;
     const result = await c.env.DB.prepare(query).all();
-    return c.json({ success: true as const, data: result.results as any[] }, 200);
-  }
+    return c.json(
+      { success: true as const, data: result.results as any[] },
+      200,
+    );
+  },
 );
 
 // ─── POST /admin/word-translations/:id/approve ────────────────────────────────
@@ -355,7 +379,10 @@ admin.openapi(
       .limit(1);
 
     if (!wt) {
-      return c.json({ success: false as const, message: "Word translation not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Word translation not found" },
+        404,
+      );
     }
 
     await db
@@ -363,8 +390,11 @@ admin.openapi(
       .set({ status: "approved", updatedAt: new Date() })
       .where(eq(wordTranslations.id, numericId));
 
-    return c.json({ success: true as const, message: "Word translation approved" }, 200);
-  }
+    return c.json(
+      { success: true as const, message: "Word translation approved" },
+      200,
+    );
+  },
 );
 
 // ─── POST /admin/word-translations/:id/reject ─────────────────────────────────
@@ -408,7 +438,10 @@ admin.openapi(
       .limit(1);
 
     if (!wt) {
-      return c.json({ success: false as const, message: "Word translation not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Word translation not found" },
+        404,
+      );
     }
 
     await db
@@ -416,8 +449,11 @@ admin.openapi(
       .set({ status: "rejected", updatedAt: new Date() })
       .where(eq(wordTranslations.id, numericId));
 
-    return c.json({ success: true as const, message: "Word translation rejected" }, 200);
-  }
+    return c.json(
+      { success: true as const, message: "Word translation rejected" },
+      200,
+    );
+  },
 );
 
 // ─── GET /admin/sources ───────────────────────────────────────────────────────
@@ -461,10 +497,13 @@ admin.openapi(
       LEFT JOIN verse_translations vt ON vt.source_id = ts.id
       GROUP BY ts.id
       ORDER BY ts.id ASC
-    `
+    `,
     ).all();
-    return c.json({ success: true as const, data: result.results as any[] }, 200);
-  }
+    return c.json(
+      { success: true as const, data: result.results as any[] },
+      200,
+    );
+  },
 );
 
 // ─── POST /admin/sources ──────────────────────────────────────────────────────
@@ -486,7 +525,10 @@ admin.openapi(
       201: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: TranslationSourceSchema }),
+            schema: z.object({
+              success: z.literal(true),
+              data: TranslationSourceSchema,
+            }),
           },
         },
         description: "Source created",
@@ -526,7 +568,7 @@ admin.openapi(
       .returning();
 
     return c.json({ success: true as const, data: created as any }, 201);
-  }
+  },
 );
 
 // ─── PUT /admin/sources/:id ───────────────────────────────────────────────────
@@ -549,7 +591,10 @@ admin.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: TranslationSourceSchema }),
+            schema: z.object({
+              success: z.literal(true),
+              data: TranslationSourceSchema,
+            }),
           },
         },
         description: "Source updated",
@@ -580,7 +625,10 @@ admin.openapi(
       .limit(1);
 
     if (!existing) {
-      return c.json({ success: false as const, message: "Source not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Source not found" },
+        404,
+      );
     }
 
     const body = c.req.valid("json");
@@ -593,17 +641,25 @@ admin.openapi(
       .update(translationSources)
       .set({
         ...(body.name !== undefined && { name: body.name.trim() }),
-        ...(body.shortName !== undefined && { shortName: body.shortName?.trim() || null }),
-        ...(body.author !== undefined && { author: body.author?.trim() || null }),
+        ...(body.shortName !== undefined && {
+          shortName: body.shortName?.trim() || null,
+        }),
+        ...(body.author !== undefined && {
+          author: body.author?.trim() || null,
+        }),
         ...(body.language !== undefined && { language: body.language.trim() }),
-        ...(body.description !== undefined && { description: body.description?.trim() || null }),
-        ...(body.isDefault !== undefined && { isDefault: body.isDefault ? 1 : 0 }),
+        ...(body.description !== undefined && {
+          description: body.description?.trim() || null,
+        }),
+        ...(body.isDefault !== undefined && {
+          isDefault: body.isDefault ? 1 : 0,
+        }),
       })
       .where(eq(translationSources.id, numericId))
       .returning();
 
     return c.json({ success: true as const, data: updated as any }, 200);
-  }
+  },
 );
 
 // ─── DELETE /admin/sources/:id ────────────────────────────────────────────────
@@ -651,11 +707,14 @@ admin.openapi(
       .limit(1);
 
     if (!existing) {
-      return c.json({ success: false as const, message: "Source not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Source not found" },
+        404,
+      );
     }
 
     const count = await c.env.DB.prepare(
-      "SELECT COUNT(*) AS n FROM verse_translations WHERE source_id = ?"
+      "SELECT COUNT(*) AS n FROM verse_translations WHERE source_id = ?",
     )
       .bind(numericId)
       .first<{ n: number }>();
@@ -666,13 +725,15 @@ admin.openapi(
           success: false as const,
           message: `Cannot delete: source has ${count.n} verse translation(s)`,
         },
-        400
+        400,
       );
     }
 
-    await db.delete(translationSources).where(eq(translationSources.id, numericId));
+    await db
+      .delete(translationSources)
+      .where(eq(translationSources.id, numericId));
     return c.json({ success: true as const, message: "Source deleted" }, 200);
-  }
+  },
 );
 
 // ─── GET /admin/users ────────────────────────────────────────────────────────
@@ -711,7 +772,7 @@ admin.openapi(
     const result = await c.env.DB.prepare(
       `SELECT id, email, display_name, role, is_active, created_at, last_login_at
        FROM contributors
-       ORDER BY id ASC`
+       ORDER BY id ASC`,
     ).all();
 
     const data = (result.results as any[]).map((row) => ({
@@ -725,7 +786,7 @@ admin.openapi(
     }));
 
     return c.json({ success: true as const, data }, 200);
-  }
+  },
 );
 
 // ─── POST /admin/users ───────────────────────────────────────────────────────
@@ -748,7 +809,10 @@ admin.openapi(
       201: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: ContributorListItemSchema }),
+            schema: z.object({
+              success: z.literal(true),
+              data: ContributorListItemSchema,
+            }),
           },
         },
         description: "Contributor created",
@@ -778,7 +842,10 @@ admin.openapi(
       .limit(1);
 
     if (existing) {
-      return c.json({ success: false as const, message: "Email already exists" }, 400);
+      return c.json(
+        { success: false as const, message: "Email already exists" },
+        400,
+      );
     }
 
     const passwordHash = await hashPassword(body.password);
@@ -807,9 +874,9 @@ admin.openapi(
           lastLoginAt: created.lastLoginAt,
         },
       },
-      201
+      201,
     );
-  }
+  },
 );
 
 // ─── PUT /admin/users/:id ────────────────────────────────────────────────────
@@ -833,7 +900,10 @@ admin.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({ success: z.literal(true), data: ContributorListItemSchema }),
+            schema: z.object({
+              success: z.literal(true),
+              data: ContributorListItemSchema,
+            }),
           },
         },
         description: "Contributor updated",
@@ -864,11 +934,21 @@ admin.openapi(
     const currentUser = c.get("contributor");
 
     if (currentUser.sub === numericId && body.isActive === false) {
-      return c.json({ success: false as const, message: "Cannot deactivate yourself" }, 400);
+      return c.json(
+        { success: false as const, message: "Cannot deactivate yourself" },
+        400,
+      );
     }
 
-    if (currentUser.sub === numericId && body.role && body.role !== currentUser.role) {
-      return c.json({ success: false as const, message: "Cannot change your own role" }, 400);
+    if (
+      currentUser.sub === numericId &&
+      body.role &&
+      body.role !== currentUser.role
+    ) {
+      return c.json(
+        { success: false as const, message: "Cannot change your own role" },
+        400,
+      );
     }
 
     const [existing] = await db
@@ -878,13 +958,18 @@ admin.openapi(
       .limit(1);
 
     if (!existing) {
-      return c.json({ success: false as const, message: "Contributor not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Contributor not found" },
+        404,
+      );
     }
 
     const [updated] = await db
       .update(contributors)
       .set({
-        ...(body.displayName !== undefined && { displayName: body.displayName.trim() }),
+        ...(body.displayName !== undefined && {
+          displayName: body.displayName.trim(),
+        }),
         ...(body.role !== undefined && { role: body.role }),
         ...(body.isActive !== undefined && { isActive: body.isActive }),
       })
@@ -904,9 +989,9 @@ admin.openapi(
           lastLoginAt: updated.lastLoginAt,
         },
       },
-      200
+      200,
     );
-  }
+  },
 );
 
 // ─── DELETE /admin/users/:id ─────────────────────────────────────────────────
@@ -950,7 +1035,10 @@ admin.openapi(
     const currentUser = c.get("contributor");
 
     if (currentUser.sub === numericId) {
-      return c.json({ success: false as const, message: "Cannot delete yourself" }, 400);
+      return c.json(
+        { success: false as const, message: "Cannot delete yourself" },
+        400,
+      );
     }
 
     const [existing] = await db
@@ -960,11 +1048,14 @@ admin.openapi(
       .limit(1);
 
     if (!existing) {
-      return c.json({ success: false as const, message: "Contributor not found" }, 404);
+      return c.json(
+        { success: false as const, message: "Contributor not found" },
+        404,
+      );
     }
 
     const contribCount = await c.env.DB.prepare(
-      "SELECT COUNT(*) AS n FROM contributions WHERE contributor_id = ?"
+      "SELECT COUNT(*) AS n FROM contributions WHERE contributor_id = ?",
     )
       .bind(numericId)
       .first<{ n: number }>();
@@ -975,13 +1066,16 @@ admin.openapi(
           success: false as const,
           message: `Cannot delete: contributor has ${contribCount.n} contribution(s)`,
         },
-        400
+        400,
       );
     }
 
     await db.delete(contributors).where(eq(contributors.id, numericId));
-    return c.json({ success: true as const, message: "Contributor deleted" }, 200);
-  }
+    return c.json(
+      { success: true as const, message: "Contributor deleted" },
+      200,
+    );
+  },
 );
 
 export default admin;

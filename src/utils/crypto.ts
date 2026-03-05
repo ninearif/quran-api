@@ -30,19 +30,27 @@ export async function hashPassword(password: string): Promise<string> {
     new TextEncoder().encode(password),
     { name: "PBKDF2" },
     false,
-    ["deriveBits"]
+    ["deriveBits"],
   );
 
   const hashBuf = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: saltBytes, iterations: ITERATIONS, hash: HASH_ALGO },
+    {
+      name: "PBKDF2",
+      salt: saltBytes,
+      iterations: ITERATIONS,
+      hash: HASH_ALGO,
+    },
     keyMaterial,
-    KEY_LENGTH * 8
+    KEY_LENGTH * 8,
   );
 
   return `${saltHex}:${bufToHex(hashBuf)}`;
 }
 
-export async function verifyPassword(password: string, stored: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  stored: string,
+): Promise<boolean> {
   const [saltHex, hashHex] = stored.split(":");
   if (!saltHex || !hashHex) return false;
 
@@ -53,13 +61,18 @@ export async function verifyPassword(password: string, stored: string): Promise<
     new TextEncoder().encode(password),
     { name: "PBKDF2" },
     false,
-    ["deriveBits"]
+    ["deriveBits"],
   );
 
   const hashBuf = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: saltBytes, iterations: ITERATIONS, hash: HASH_ALGO },
+    {
+      name: "PBKDF2",
+      salt: saltBytes,
+      iterations: ITERATIONS,
+      hash: HASH_ALGO,
+    },
     keyMaterial,
-    KEY_LENGTH * 8
+    KEY_LENGTH * 8,
   );
 
   return bufToHex(hashBuf) === hashHex;
