@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/quran-th/quran-api/compare/v1.1.1...v1.2.0) (2026-03-05)
+
+
+### Features
+
+* add ESLint config and migrate asset fetching to R2 binding ([c5bc68f](https://github.com/quran-th/quran-api/commit/c5bc68f2cea4b7969002051cb005ecc452ae591b))
+
 ## [1.1.1](https://github.com/quran-th/quran-api/compare/v1.1.0...v1.1.1) (2026-03-04)
 
 
