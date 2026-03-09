@@ -263,6 +263,34 @@ export const SurahWithVersesSchema = SurahSchema.extend({
   verses: z.array(SurahVerseSchema),
 }).openapi("SurahWithVerses");
 
+export const VersesByKeysBodySchema = z
+  .object({
+    sourceId: z.number().int().positive().optional().openapi({ example: 1 }),
+    keys: z
+      .array(z.string().regex(/^\d+:\d+$/))
+      .min(1)
+      .max(500)
+      .openapi({
+        example: ["2:282", "2:283"],
+        description: "Array of surah:verse keys",
+      }),
+  })
+  .openapi("VersesByKeysBody");
+
+export const VersesByKeysResponseSchema = z
+  .object({
+    success: z.literal(true),
+    data: z.object({
+      sourceId: z.number(),
+      verses: z.array(
+        SurahVerseSchema.extend({
+          surahNumber: z.number(),
+        }),
+      ),
+    }),
+  })
+  .openapi("VersesByKeysResponse");
+
 export const SurahIdParamSchema = z.object({
   id: z
     .string()

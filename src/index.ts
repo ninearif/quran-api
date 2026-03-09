@@ -17,6 +17,8 @@ import {
   SurahWithPaginatedVersesSchema,
   SurahIdParamSchema,
   SurahVerseQuerySchema,
+  VersesByKeysBodySchema,
+  VersesByKeysResponseSchema,
 } from "./openapi/schemas";
 
 type MushafPageEntry = {
@@ -303,7 +305,6 @@ app.openapi(
           success: true as const,
           data: { ...surah, sourceId, verses, pagination } as any,
         },
-        200,
       );
     } catch (e) {
       console.error(e);
@@ -313,6 +314,157 @@ app.openapi(
       );
     }
   },
+);
+
+// ─── POST /verses/by-keys ──────────────────────────────────────────────────────
+// Returns a list of verses matching the provided "surahNumber:verseNumber" keys
+// in the exact order requested. Used by Mushaf page translation views where
+// verses span across multiple logical surahs or don't form a contiguous block.
+
+app.openapi(
+  createRoute({
+    method: "post",
+    path: "/verses/by-keys",
+    tags: ["Quran"],
+    summary: "Get specific verses by their surah:verse keys",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: VersesByKeysBodySchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: VersesByKeysResponseSchema,
+          },
+        },
+        description: "List of requested verses",
+      },
+      500: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Server error",
+      },
+    },
+  }),
+  async (c) => {
+    const { sourceId: sourceIdParam, keys } = c.req.valid("json");
+
+    try {
+      const db = drizzle(c.env.DB);
+
+      // Resolve which translation source to use
+      let sourceId: number;
+      if (sourceIdParam) {
+        sourceId = sourceIdParam;
+      } else {
+        const defaultSource = await db
+          .select({ id: translationSources.id })
+          .from(translationSources)
+          .where(eq(translationSources.isDefault, 1))
+          .limit(1);
+        sourceId = defaultSource[0]?.id ?? 1;
+      }
+
+      // Parse requested keys: "surah:verse" -> { surah, verse }
+      const keyMap = new Map<string, { surah: number; verse: number; originalOrder: number }>();
+      keys.forEach((k, idx) => {
+        const [surah, verse] = k.split(":").map(Number);
+        keyMap.set(k, { surah, verse, originalOrder: idx });
+      });
+
+      // Construct WHERE clause for multiple pairs: (surah = X AND verse = Y) OR ...
+      // D1 has a parameter limit (usually 100 or 999), so if keys > 100 we might need chunking.
+      // Maximum page size is ~15 verses on average, so max keys ~15. Chunking not strictly needed for page, 
+      // but let's build the query dynamically.
+      const conditions: string[] = [];
+      const params: any[] = [];
+      for (const { surah, verse } of keyMap.values()) {
+        conditions.push("(surah_number = ? AND verse_number = ?)");
+        params.push(surah, verse);
+      }
+      
+      if (conditions.length === 0) {
+        return c.json({ success: true as const, data: { sourceId, verses: [] } }, 200);
+      }
+
+      const whereClause = conditions.join(" OR ");
+
+      // Fetch Arabic verse text
+      const arabicVerses = await c.env.DB.prepare(
+        `SELECT surah_number, verse_number, content FROM quran_translations WHERE ${whereClause}`
+      ).bind(...params).all<{ surah_number: number; verse_number: number; content: string }>();
+
+      // Fetch Thai translations for the chosen source 
+      const vtRows = await c.env.DB.prepare(
+        `SELECT id, surah_number, verse_number, translation_text, is_verified 
+         FROM verse_translations 
+         WHERE source_id = ? AND (${whereClause})`
+      ).bind(sourceId, ...params).all<{ id: number; surah_number: number; verse_number: number; translation_text: string; is_verified: number }>();
+
+      const vtIds = vtRows.results.map((r) => r.id);
+      
+      const footnoteMap = new Map<number, { number: number; text: string }[]>();
+      
+      if (vtIds.length > 0) {
+        // Fetch footnotes
+        const placeholders = vtIds.map(() => "?").join(",");
+        const fnRows = await c.env.DB.prepare(
+          `SELECT verse_translation_id, footnote_number, text 
+           FROM translation_footnotes 
+           WHERE verse_translation_id IN (${placeholders})
+           ORDER BY verse_translation_id, footnote_number ASC`
+        ).bind(...vtIds).all<{ verse_translation_id: number; footnote_number: number; text: string }>();
+
+        fnRows.results.forEach((fn) => {
+          if (!footnoteMap.has(fn.verse_translation_id)) {
+            footnoteMap.set(fn.verse_translation_id, []);
+          }
+          footnoteMap.get(fn.verse_translation_id)!.push({ number: fn.footnote_number, text: fn.text });
+        });
+      }
+
+      // Merge Arabic content + Thai translation + footnotes per verse
+      const translationByVerse = new Map(
+        vtRows.results.map((r) => [`${r.surah_number}:${r.verse_number}`, r])
+      );
+      
+      const arabicByVerse = new Map(
+        arabicVerses.results.map((r) => [`${r.surah_number}:${r.verse_number}`, r])
+      );
+
+      // Assemble results strictly in the order requested by `keys`
+      const verses = keys.map((k) => {
+        const arabic = arabicByVerse.get(k);
+        const vt = translationByVerse.get(k);
+        const [surah, verse] = k.split(":").map(Number);
+        
+        return {
+          surahNumber: surah,
+          verseNumber: verse,
+          content: arabic?.content ?? "",
+          translation: vt?.translation_text ?? "",
+          footnotes: vt ? (footnoteMap.get(vt.id) ?? []) : [],
+          isVerified: vt ? Boolean(vt.is_verified) : false,
+        };
+      });
+
+      return c.json(
+        {
+          success: true as const,
+          data: { sourceId, verses },
+        },
+        200,
+      );
+    } catch (e) {
+      console.error(e);
+      return c.json({ success: false as const, message: "Failed to fetch verses by keys" }, 500);
+    }
+  }
 );
 
 // ─── GET /verse-words/:surahId ─────────────────────────────────────────────────
