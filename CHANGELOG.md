@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/quran-th/quran-api/compare/v1.3.0...v1.3.1) (2026-03-09)
+
+
+### Bug Fixes
+
+* resolve all ESLint no-explicit-any and TypeScript errors ([e25cf79](https://github.com/quran-th/quran-api/commit/e25cf79500f8ab8ad7cb5616bbffd626a296ad42))
+
 # [1.3.0](https://github.com/quran-th/quran-api/compare/v1.2.0...v1.3.0) (2026-03-09)
 
 
