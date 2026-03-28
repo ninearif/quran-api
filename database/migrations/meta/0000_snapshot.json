@@ -57,12 +57,8 @@
           "name": "changelog_translation_id_quran_translations_id_fk",
           "tableFrom": "changelog",
           "tableTo": "quran_translations",
-          "columnsFrom": [
-            "translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -124,12 +120,8 @@
           "name": "contributions_translation_id_quran_translations_id_fk",
           "tableFrom": "contributions",
           "tableTo": "quran_translations",
-          "columnsFrom": [
-            "translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -173,9 +165,7 @@
       "indexes": {
         "idx_reports_translation_id": {
           "name": "idx_reports_translation_id",
-          "columns": [
-            "translation_id"
-          ],
+          "columns": ["translation_id"],
           "isUnique": false
         }
       },
@@ -184,12 +174,8 @@
           "name": "issue_reports_translation_id_quran_translations_id_fk",
           "tableFrom": "issue_reports",
           "tableTo": "quran_translations",
-          "columnsFrom": [
-            "translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -255,16 +241,12 @@
       "indexes": {
         "surah_idx": {
           "name": "surah_idx",
-          "columns": [
-            "surah_number"
-          ],
+          "columns": ["surah_number"],
           "isUnique": false
         },
         "verse_idx": {
           "name": "verse_idx",
-          "columns": [
-            "verse_number"
-          ],
+          "columns": ["verse_number"],
           "isUnique": false
         }
       },

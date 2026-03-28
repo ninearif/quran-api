@@ -14,6 +14,7 @@ REST API for the Open Thai Quran Project — community-driven Quran translation 
 ## Database Schema
 
 9 tables including:
+
 - `quran_translations` - Arabic verse text
 - `translation_sources` - Named translation sources
 - `verse_translations` - Per-source Thai translations
@@ -43,6 +44,7 @@ npm run dev
 ```
 
 **Test credentials** (after seeding):
+
 - Email: `admin@local.dev`
 - Password: `password123`
 
@@ -73,10 +75,12 @@ npm run typecheck
 Automatically deployed to Cloudflare Workers via GitHub Actions on push to `main`.
 
 **Required Secrets:**
+
 - `CLOUDFLARE_API_TOKEN` - Cloudflare API token
 - `CLOUDFLARE_ACCOUNT_ID` - Your Cloudflare account ID
 
 **Manual deployment:**
+
 ```bash
 npm run deploy
 ```
@@ -95,5 +99,6 @@ npm run deploy
 ## CORS
 
 Configured to allow requests from:
+
 - quran-web (Quran frontend)
 - quran-contributor (Translation Contributor tool)

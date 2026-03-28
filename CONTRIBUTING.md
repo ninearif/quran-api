@@ -42,6 +42,7 @@ npm run db:seed
 ```
 
 This adds:
+
 - Al-Fatihah (7 verses) and Al-Baqarah (first 5 verses)
 - Test admin account: `admin@local.dev` / `password123`
 - Sample contribution for testing approval workflow
@@ -53,20 +54,21 @@ npm run dev
 ```
 
 The API will be available at:
+
 - **API**: http://localhost:8787
 - **Swagger UI**: http://localhost:8787/ui
 - **OpenAPI Spec**: http://localhost:8787/doc
 
 ## Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start local development server with local D1/KV |
-| `npm run db:seed` | Seed local database with sample data |
-| `npm run db:generate` | Generate migrations from schema changes |
-| `npx wrangler d1 migrations apply DB --local` | Apply migrations to local D1 |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript type checking |
+| Command                                       | Description                                     |
+| --------------------------------------------- | ----------------------------------------------- |
+| `npm run dev`                                 | Start local development server with local D1/KV |
+| `npm run db:seed`                             | Seed local database with sample data            |
+| `npm run db:generate`                         | Generate migrations from schema changes         |
+| `npx wrangler d1 migrations apply DB --local` | Apply migrations to local D1                    |
+| `npm run lint`                                | Run ESLint                                      |
+| `npm run typecheck`                           | Run TypeScript type checking                    |
 
 ## Testing Your Changes
 

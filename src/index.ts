@@ -213,7 +213,30 @@ app.openapi(
         .offset(offset)
         .all();
 
-      // Fetch Thai translations for the chosen source with pagination
+      if (arabicVerses.length === 0) {
+        return c.json(
+          {
+            success: true as const,
+            data: {
+              ...surah,
+              sourceId,
+              verses: [],
+              pagination: {
+                offset,
+                limit,
+                total: surah.verses_count,
+                hasMore: false,
+              },
+            } as unknown as z.infer<typeof SurahWithPaginatedVersesSchema>,
+          },
+          200,
+        );
+      }
+
+      const verseNumbers = arabicVerses.map((v) => v.verseNumber);
+      const placeholders = verseNumbers.map(() => "?").join(",");
+
+      // Fetch Thai translations for the chosen source precisely for these verses
       const vtRows = await c.env.DB.prepare(
         `
         SELECT
@@ -222,12 +245,11 @@ app.openapi(
           vt.translation_text,
           vt.is_verified
         FROM verse_translations vt
-        WHERE vt.source_id = ? AND vt.surah_number = ?
+        WHERE vt.source_id = ? AND vt.surah_number = ? AND vt.verse_number IN (${placeholders})
         ORDER BY vt.verse_number ASC
-        LIMIT ? OFFSET ?
       `,
       )
-        .bind(sourceId, numericId, limit, offset)
+        .bind(sourceId, numericId, ...verseNumbers)
         .all<{
           id: number;
           verse_number: number;
@@ -235,14 +257,10 @@ app.openapi(
           is_verified: number;
         }>();
 
-      // Fetch footnotes scoped to the current verse range to avoid D1's bound-parameter limit.
+      // Fetch footnotes scoped to the current verse range
       const footnoteMap = new Map<number, { number: number; text: string }[]>();
 
       if (vtRows.results.length > 0) {
-        // Calculate verse range: (offset, offset + limit]
-        const verseStart = offset;
-        const verseEnd = offset + limit;
-
         const fnRows = await c.env.DB.prepare(
           `
           SELECT tf.verse_translation_id, tf.footnote_number, tf.text
@@ -250,12 +268,12 @@ app.openapi(
           WHERE tf.verse_translation_id IN (
             SELECT vt.id FROM verse_translations vt
             WHERE vt.source_id = ? AND vt.surah_number = ?
-              AND vt.verse_number > ? AND vt.verse_number <= ?
+              AND vt.verse_number IN (${placeholders})
           )
           ORDER BY tf.verse_translation_id, tf.footnote_number ASC
         `,
         )
-          .bind(sourceId, numericId, verseStart, verseEnd)
+          .bind(sourceId, numericId, ...verseNumbers)
           .all<{
             verse_translation_id: number;
             footnote_number: number;
@@ -505,6 +523,7 @@ app.openapi(
 
 // ─── GET /verse-words/:surahId ─────────────────────────────────────────────────
 // Serves word-level data for QCF glyph rendering, fetched from R2 assets.
+// Falls back to local static files if R2 doesn't have the data.
 
 app.get("/verse-words/:surahId", async (c) => {
   const { surahId } = c.req.param();
@@ -515,17 +534,21 @@ app.get("/verse-words/:surahId", async (c) => {
   }
 
   try {
+    // Try R2 first
     const obj = await c.env.ASSETS_BUCKET.get(`quran-words/${numericId}.json`);
 
-    if (!obj) {
-      return c.json({ success: false, message: "Words not found" }, 404);
+    if (obj) {
+      const data = await obj.json();
+      return c.json({ success: true, data });
     }
 
-    const data = await obj.json();
-    return c.json({ success: true, data });
+    // Fallback: Import local static file
+    // @ts-ignore - Dynamic import for local development
+    const localData = await import(`../data/quran-words/${numericId}.json`);
+    return c.json({ success: true, data: localData.default || localData });
   } catch (e) {
     console.error("Error fetching verse words:", e);
-    return c.json({ success: false, message: "Server error" }, 500);
+    return c.json({ success: false, message: "Words not found" }, 404);
   }
 });
 

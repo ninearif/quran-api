@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { drizzle } from "drizzle-orm/d1";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, ne, and, desc } from "drizzle-orm";
 import { contributions, wordTranslations } from "../db/schema";
 import { requireAuth, requireActiveOnWrite } from "../middleware/auth";
 import type { JwtPayload } from "../utils/jwt";
@@ -379,6 +379,147 @@ contributor.openapi(
   },
 );
 
+// ─── GET /contributor/word-translations/similar ───────────────────────────────
+
+contributor.openapi(
+  createRoute({
+    method: "get",
+    path: "/word-translations/similar",
+    tags: ["Contributor"],
+    summary: "Find similar words across different verses by Arabic text",
+    security: [{ bearerAuth: [] }],
+    request: {
+      query: z.object({
+        arabicText: z
+          .string()
+          .min(1)
+          .openapi({
+            param: { name: "arabicText", in: "query" },
+            example: "الْحَمْدُ",
+          }),
+        language: z
+          .string()
+          .optional()
+          .openapi({
+            param: { name: "language", in: "query" },
+            example: "en",
+          }),
+        excludeSurahNumber: z.coerce
+          .number()
+          .int()
+          .min(1)
+          .max(114)
+          .optional()
+          .openapi({
+            param: { name: "excludeSurahNumber", in: "query" },
+            example: 1,
+          }),
+        excludeVerseNumber: z.coerce
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .openapi({
+            param: { name: "excludeVerseNumber", in: "query" },
+            example: 2,
+          }),
+      }),
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(WordTranslationSchema),
+            }),
+          },
+        },
+        description: "Similar words found in other verses",
+      },
+      401: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Unauthorized",
+      },
+    },
+  }),
+  async (c) => {
+    const { arabicText: rawArabicText, language, excludeSurahNumber, excludeVerseNumber } =
+      c.req.valid("query");
+    const arabicText = rawArabicText.normalize("NFC");
+    const db = drizzle(c.env.DB);
+
+    // Build conditions for finding similar words
+    const conditions = [eq(wordTranslations.arabicText, arabicText)];
+
+    // Filter by language if provided
+    if (language) {
+      conditions.push(eq(wordTranslations.language, language));
+    }
+
+    // Exclude current verse if specified
+    if (excludeSurahNumber !== undefined && excludeVerseNumber !== undefined) {
+      // Build SQL dynamically based on language filter
+      let sql = `
+        SELECT
+          id,
+          surah_number,
+          verse_number,
+          word_position,
+          arabic_text,
+          meaning,
+          language,
+          transliteration,
+          contributor_id,
+          status,
+          created_at,
+          updated_at
+        FROM word_translations
+        WHERE arabic_text = ?
+          AND NOT (surah_number = ? AND verse_number = ?)
+          AND TRIM(meaning) != ''
+      `;
+
+      const bindParams: any[] = [arabicText, excludeSurahNumber, excludeVerseNumber];
+
+      if (language) {
+        sql += ` AND language = ?`;
+        bindParams.push(language);
+      }
+
+      sql += ` ORDER BY surah_number, verse_number, word_position LIMIT 50`;
+
+      const words = await c.env.DB.prepare(sql).bind(...bindParams).all();
+
+      return c.json(
+        {
+          success: true as const,
+          data: words.results as unknown as z.infer<typeof WordTranslationSchema>[],
+        },
+        200,
+      );
+    }
+
+    // Standard query without exclusion
+    conditions.push(ne(wordTranslations.meaning, ""));
+    const words = await db
+      .select()
+      .from(wordTranslations)
+      .where(and(...conditions))
+      .orderBy(wordTranslations.surahNumber, wordTranslations.verseNumber, wordTranslations.wordPosition)
+      .limit(50)
+      .all();
+
+    return c.json(
+      {
+        success: true as const,
+        data: words as unknown as z.infer<typeof WordTranslationSchema>[],
+      },
+      200,
+    );
+  },
+);
+
 // ─── POST /contributor/word-translations ──────────────────────────────────────
 
 contributor.openapi(
@@ -429,11 +570,12 @@ contributor.openapi(
       surahNumber,
       verseNumber,
       wordPosition,
-      arabicText,
+      arabicText: rawArabicText,
       meaning,
       language,
       transliteration,
     } = body;
+    const arabicText = rawArabicText.normalize("NFC");
     const payload = c.get("contributor");
     const db = drizzle(c.env.DB);
 
@@ -736,6 +878,381 @@ contributor.openapi(
       200,
     );
   },
+);
+
+// ─── GET /contributor/words ───────────────────────────────────────────────────────
+
+contributor.openapi(
+  createRoute({
+    method: "get",
+    path: "/words",
+    tags: ["Contributor"],
+    summary: "List all word translations with filters and pagination",
+    security: [{ bearerAuth: [] }],
+    request: {
+      query: z.object({
+        surahNumber: z.coerce.number().int().min(1).max(114).optional(),
+        verseNumber: z.coerce.number().int().positive().optional(),
+        language: z.string().optional(),
+        status: z.enum(["pending", "approved", "rejected"]).optional(),
+        page: z.coerce.number().int().positive().default(1),
+        pageSize: z.coerce.number().int().positive().max(100).default(50),
+      }),
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(z.record(z.string(), z.unknown())),
+              meta: z.object({
+                total: z.number(),
+                page: z.number(),
+                pageSize: z.number(),
+                totalPages: z.number(),
+              }),
+            }),
+          },
+        },
+        description: "Paginated word translations",
+      },
+      401: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Unauthorized",
+      },
+    },
+  }),
+  async (c) => {
+    const { surahNumber, verseNumber, language, status, page, pageSize } = c.req.valid("query");
+
+    // Build WHERE clause
+    const conditions: string[] = [];
+    const params: (string | number)[] = [];
+
+    if (surahNumber !== undefined) {
+      conditions.push("wt.surah_number = ?");
+      params.push(surahNumber);
+    }
+    if (verseNumber !== undefined) {
+      conditions.push("wt.verse_number = ?");
+      params.push(verseNumber);
+    }
+    if (language !== undefined) {
+      conditions.push("wt.language = ?");
+      params.push(language);
+    }
+    if (status !== undefined) {
+      conditions.push("wt.status = ?");
+      params.push(status);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    // Get total count
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM word_translations wt
+      ${whereClause}
+    `;
+    const countResult = await c.env.DB.prepare(countQuery)
+      .bind(...params)
+      .first<{ total: number }>();
+    const total = countResult?.total || 0;
+    const totalPages = Math.ceil(total / pageSize);
+
+    // Get paginated data
+    const offset = (page - 1) * pageSize;
+    const dataQuery = `
+      SELECT
+        wt.id,
+        wt.surah_number,
+        wt.verse_number,
+        wt.word_position,
+        wt.arabic_text,
+        wt.meaning,
+        wt.language,
+        wt.transliteration,
+        wt.status,
+        wt.contributor_id,
+        wt.created_at,
+        wt.updated_at,
+        co.email AS contributor_email,
+        co.display_name AS contributor_name
+      FROM word_translations wt
+      LEFT JOIN contributors co ON co.id = wt.contributor_id
+      ${whereClause}
+      ORDER BY wt.surah_number ASC, wt.verse_number ASC, wt.word_position ASC
+      LIMIT ? OFFSET ?
+    `;
+
+    const result = await c.env.DB.prepare(dataQuery)
+      .bind(...params, pageSize, offset)
+      .all();
+
+    return c.json({
+      success: true as const,
+      data: result.results as Record<string, unknown>[],
+      meta: {
+        total,
+        page,
+        pageSize,
+        totalPages,
+      },
+    });
+  },
+);
+
+// ─── PUT /contributor/words/:id ───────────────────────────────────────────────────
+
+contributor.openapi(
+  createRoute({
+    method: "put",
+    path: "/words/{id}",
+    tags: ["Contributor"],
+    summary: "Update a word translation",
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: z.object({
+        id: z.string().openapi({
+          param: { name: "id", in: "path" },
+          example: "1",
+        }),
+      }),
+      body: {
+        content: {
+          "application/json": z.object({
+            meaning: z.string().optional(),
+            transliteration: z.string().optional(),
+            status: z.enum(["pending", "approved", "rejected"]).optional(),
+          }),
+        },
+        required: true,
+      },
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              message: z.string(),
+            }),
+          },
+        },
+        description: "Word translation updated",
+      },
+      400: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Invalid request",
+      },
+      401: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Unauthorized",
+      },
+      404: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Word translation not found",
+      },
+    },
+  }),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const numericId = parseInt(id);
+    const body = c.req.valid("json");
+
+    // Check if word translation exists
+    const existing = await c.env.DB.prepare(
+      "SELECT id FROM word_translations WHERE id = ?"
+    )
+      .bind(numericId)
+      .first<{ id: number }>();
+
+    if (!existing) {
+      return c.json(
+        { success: false as const, message: "Word translation not found" },
+        404
+      );
+    }
+
+    // Build update query
+    const updates: string[] = [];
+    const params: (string | number)[] = [];
+
+    if (body.meaning !== undefined) {
+      updates.push("meaning = ?");
+      params.push(body.meaning);
+    }
+    if (body.transliteration !== undefined) {
+      updates.push("transliteration = ?");
+      params.push(body.transliteration);
+    }
+    if (body.status !== undefined) {
+      updates.push("status = ?");
+      params.push(body.status);
+    }
+
+    if (updates.length === 0) {
+      return c.json(
+        { success: false as const, message: "No fields to update" },
+        400
+      );
+    }
+
+    updates.push("updated_at = strftime('%s', 'now')");
+    params.push(numericId);
+
+    await c.env.DB.prepare(
+      `UPDATE word_translations SET ${updates.join(", ")} WHERE id = ?`
+    )
+      .bind(...params)
+      .run();
+
+    return c.json(
+      { success: true as const, message: "Word translation updated" },
+      200
+    );
+  },
+);
+
+// ─── DELETE /contributor/words/:id ────────────────────────────────────────────────
+
+contributor.openapi(
+  createRoute({
+    method: "delete",
+    path: "/words/{id}",
+    tags: ["Contributor"],
+    summary: "Delete a word translation",
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: z.object({
+        id: z.string().openapi({
+          param: { name: "id", in: "path" },
+          example: "1",
+        }),
+      }),
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: MessageSchema,
+          },
+        },
+        description: "Word translation deleted",
+      },
+      401: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Unauthorized",
+      },
+      404: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Word translation not found",
+      },
+    },
+  }),
+  async (c) => {
+    const { id } = c.req.valid("param");
+    const numericId = parseInt(id);
+
+    // Check if word translation exists
+    const existing = await c.env.DB.prepare(
+      "SELECT id FROM word_translations WHERE id = ?"
+    )
+      .bind(numericId)
+      .first<{ id: number }>();
+
+    if (!existing) {
+      return c.json(
+        { success: false as const, message: "Word translation not found" },
+        404
+      );
+    }
+
+    await c.env.DB.prepare("DELETE FROM word_translations WHERE id = ?")
+      .bind(numericId)
+      .run();
+
+    return c.json(
+      { success: true as const, message: "Word translation deleted" },
+      200
+    );
+  },
+);
+
+// ─── GET /contributor/word-translations/progress ──────────────────────────────
+
+contributor.openapi(
+  createRoute({
+    method: "get",
+    path: "/word-translations/progress",
+    tags: ["Contributor"],
+    summary:
+      "Get per-surah word translation progress (approved and pending verse counts)",
+    security: [{ bearerAuth: [] }],
+    request: {
+      query: z.object({
+        language: z
+          .string()
+          .optional()
+          .openapi({
+            param: { name: "language", in: "query" },
+            example: "th",
+          }),
+      }),
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(
+                z.object({
+                  surah_number: z.number(),
+                  translated: z.number(),
+                  pending: z.number(),
+                })
+              ),
+            }),
+          },
+        },
+        description: "Per-surah word translation progress",
+      },
+      401: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Unauthorized",
+      },
+    },
+  }),
+  async (c) => {
+    const { language } = c.req.valid("query");
+    const langFilter = language || "th";
+
+    // Count distinct verses that have at least one approved word translation per surah
+    // and distinct verses that have at least one pending word translation per surah
+    const rows = await c.env.DB.prepare(
+      `SELECT
+        surah_number,
+        COUNT(DISTINCT CASE WHEN status = 'approved' THEN surah_number || ':' || verse_number END) AS translated,
+        COUNT(DISTINCT CASE WHEN status = 'pending' THEN surah_number || ':' || verse_number END) AS pending
+      FROM word_translations
+      WHERE language = ?
+      GROUP BY surah_number
+      ORDER BY surah_number`
+    )
+      .bind(langFilter)
+      .all();
+
+    return c.json({
+      success: true as const,
+      data: (rows.results || []).map((r: any) => ({
+        surah_number: r.surah_number as number,
+        translated: (r.translated as number) || 0,
+        pending: (r.pending as number) || 0,
+      })),
+    });
+  }
 );
 
 export default contributor;

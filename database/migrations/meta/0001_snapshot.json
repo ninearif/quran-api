@@ -57,12 +57,8 @@
           "name": "changelog_translation_id_quran_translations_id_fk",
           "tableFrom": "changelog",
           "tableTo": "quran_translations",
-          "columnsFrom": [
-            "translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -145,12 +141,8 @@
           "name": "contributions_translation_id_quran_translations_id_fk",
           "tableFrom": "contributions",
           "tableTo": "quran_translations",
-          "columnsFrom": [
-            "translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -158,12 +150,8 @@
           "name": "contributions_contributor_id_contributors_id_fk",
           "tableFrom": "contributions",
           "tableTo": "contributors",
-          "columnsFrom": [
-            "contributor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["contributor_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -171,12 +159,8 @@
           "name": "contributions_source_id_translation_sources_id_fk",
           "tableFrom": "contributions",
           "tableTo": "translation_sources",
-          "columnsFrom": [
-            "source_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["source_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -184,12 +168,8 @@
           "name": "contributions_verse_translation_id_verse_translations_id_fk",
           "tableFrom": "contributions",
           "tableTo": "verse_translations",
-          "columnsFrom": [
-            "verse_translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["verse_translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -277,24 +257,17 @@
       "indexes": {
         "contributors_email_unique": {
           "name": "contributors_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         },
         "idx_contributors_email": {
           "name": "idx_contributors_email",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": false
         },
         "idx_contributors_oauth": {
           "name": "idx_contributors_oauth",
-          "columns": [
-            "oauth_provider",
-            "oauth_id"
-          ],
+          "columns": ["oauth_provider", "oauth_id"],
           "isUnique": false
         }
       },
@@ -338,9 +311,7 @@
       "indexes": {
         "idx_reports_translation_id": {
           "name": "idx_reports_translation_id",
-          "columns": [
-            "translation_id"
-          ],
+          "columns": ["translation_id"],
           "isUnique": false
         }
       },
@@ -349,12 +320,8 @@
           "name": "issue_reports_translation_id_quran_translations_id_fk",
           "tableFrom": "issue_reports",
           "tableTo": "quran_translations",
-          "columnsFrom": [
-            "translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -413,16 +380,12 @@
       "indexes": {
         "surah_idx": {
           "name": "surah_idx",
-          "columns": [
-            "surah_number"
-          ],
+          "columns": ["surah_number"],
           "isUnique": false
         },
         "verse_idx": {
           "name": "verse_idx",
-          "columns": [
-            "verse_number"
-          ],
+          "columns": ["verse_number"],
           "isUnique": false
         }
       },
@@ -465,10 +428,7 @@
       "indexes": {
         "idx_fn_unique": {
           "name": "idx_fn_unique",
-          "columns": [
-            "verse_translation_id",
-            "footnote_number"
-          ],
+          "columns": ["verse_translation_id", "footnote_number"],
           "isUnique": true
         }
       },
@@ -477,12 +437,8 @@
           "name": "translation_footnotes_verse_translation_id_verse_translations_id_fk",
           "tableFrom": "translation_footnotes",
           "tableTo": "verse_translations",
-          "columnsFrom": [
-            "verse_translation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["verse_translation_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -616,19 +572,12 @@
       "indexes": {
         "idx_vt_unique": {
           "name": "idx_vt_unique",
-          "columns": [
-            "source_id",
-            "surah_number",
-            "verse_number"
-          ],
+          "columns": ["source_id", "surah_number", "verse_number"],
           "isUnique": true
         },
         "idx_vt_surah": {
           "name": "idx_vt_surah",
-          "columns": [
-            "source_id",
-            "surah_number"
-          ],
+          "columns": ["source_id", "surah_number"],
           "isUnique": false
         }
       },
@@ -637,12 +586,8 @@
           "name": "verse_translations_source_id_translation_sources_id_fk",
           "tableFrom": "verse_translations",
           "tableTo": "translation_sources",
-          "columnsFrom": [
-            "source_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["source_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -730,10 +675,7 @@
       "indexes": {
         "idx_word_translations_verse": {
           "name": "idx_word_translations_verse",
-          "columns": [
-            "surah_number",
-            "verse_number"
-          ],
+          "columns": ["surah_number", "verse_number"],
           "isUnique": false
         },
         "idx_word_translations_unique": {
@@ -752,12 +694,8 @@
           "name": "word_translations_contributor_id_contributors_id_fk",
           "tableFrom": "word_translations",
           "tableTo": "contributors",
-          "columnsFrom": [
-            "contributor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["contributor_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
