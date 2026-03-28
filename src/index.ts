@@ -9,6 +9,7 @@ import { surahs } from "./data/surahs";
 import auth from "./routes/auth";
 import contributor from "./routes/contributor";
 import admin from "./routes/admin";
+import reports from "./routes/reports";
 
 import {
   ErrorSchema,
@@ -34,6 +35,7 @@ type Bindings = {
   ASSETS_BUCKET: R2Bucket;
   JWT_SECRET: string;
   ASSETS_BASE_URL: string;
+  TURNSTILE_SECRET_KEY: string;
 };
 
 // ─── App ──────────────────────────────────────────────────────────────────────
@@ -657,6 +659,7 @@ app.openapi(
 app.route("/auth", auth);
 app.route("/contributor", contributor);
 app.route("/admin", admin);
+app.route("/reports", reports);
 
 // ─── OpenAPI spec + Swagger UI ────────────────────────────────────────────────
 // Register the bearer auth security scheme so it appears in the Swagger UI

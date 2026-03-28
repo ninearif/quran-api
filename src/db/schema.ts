@@ -145,6 +145,23 @@ export const issueReports = sqliteTable(
       () => quranTranslations.id,
     ),
     fingerprint: text("fingerprint").notNull(),
+    reportType: text("report_type", { enum: ["quick", "detailed"] })
+      .notNull()
+      .default("quick"),
+    categories: text("categories"),
+    suggestedText: text("suggested_text"),
+    suggestedFootnotes: text("suggested_footnotes"),
+    contactName: text("contact_name"),
+    userId: integer("user_id").references(() => contributors.id),
+    status: text("status", { enum: ["open", "resolved", "dismissed"] })
+      .notNull()
+      .default("open"),
+    sourceId: integer("source_id").references(() => translationSources.id),
+    surahNumber: integer("surah_number"),
+    verseNumber: integer("verse_number"),
+    verseTranslationId: integer("verse_translation_id").references(
+      () => verseTranslations.id,
+    ),
     createdAt: integer("created_at", { mode: "timestamp" }).default(
       sql`(strftime('%s', 'now'))`,
     ),
@@ -153,6 +170,12 @@ export const issueReports = sqliteTable(
     return {
       translationIdx: index("idx_reports_translation_id").on(
         table.translationId,
+      ),
+      fingerprintIdx: index("idx_reports_fingerprint").on(table.fingerprint),
+      statusIdx: index("idx_reports_status").on(table.status),
+      verseIdx: index("idx_reports_verse").on(
+        table.surahNumber,
+        table.verseNumber,
       ),
     };
   },

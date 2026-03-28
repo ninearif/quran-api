@@ -238,6 +238,54 @@ export const FootnoteBodySchema = z
   })
   .openapi("FootnoteBody");
 
+// ─── Public Reports ──────────────────────────────────────────────────────────
+
+export const ReportBodySchema = z
+  .object({
+    verseTranslationId: z.number().int().positive().optional(),
+    surahNumber: z.number().int().min(1).max(114).openapi({ example: 2 }),
+    verseNumber: z.number().int().positive().openapi({ example: 255 }),
+    sourceId: z.number().int().positive().optional(),
+    fingerprint: z.string().min(8).max(128).openapi({ example: "a1b2c3d4e5f6" }),
+    turnstileToken: z.string().min(1).openapi({ example: "0.turnstile_token_here" }),
+    reportType: z.enum(["quick", "detailed"]).openapi({ example: "quick" }),
+    categories: z
+      .array(
+        z.enum(["typo", "missing_words", "wrong_translation", "footnote_issue"]),
+      )
+      .optional()
+      .openapi({ example: ["typo"] }),
+    suggestedText: z.string().max(5000).optional(),
+    suggestedFootnotes: z
+      .array(
+        z.object({
+          footnoteNumber: z.number().int().positive(),
+          text: z.string().min(1),
+        }),
+      )
+      .optional(),
+    contactName: z.string().max(100).optional(),
+  })
+  .openapi("ReportBody");
+
+export const ReportResponseSchema = z
+  .object({
+    success: z.literal(true),
+    data: z.object({
+      id: z.number(),
+    }),
+  })
+  .openapi("ReportResponse");
+
+export const ReportCheckResponseSchema = z
+  .object({
+    success: z.literal(true),
+    data: z.object({
+      reported: z.boolean(),
+    }),
+  })
+  .openapi("ReportCheckResponse");
+
 // ─── Surahs (Public) ──────────────────────────────────────────────────────────
 
 export const SurahVerseSchema = z
