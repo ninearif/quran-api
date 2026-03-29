@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/quran-th/quran-api/compare/v1.4.0...v1.4.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* type and lint errors ([18fba59](https://github.com/quran-th/quran-api/commit/18fba5924bf6a739b96ed6a89fa24bf3ea5ab681))
+
 # [1.4.0](https://github.com/quran-th/quran-api/compare/v1.3.1...v1.4.0) (2026-03-29)
 
 
