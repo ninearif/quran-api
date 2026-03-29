@@ -246,12 +246,24 @@ export const ReportBodySchema = z
     surahNumber: z.number().int().min(1).max(114).openapi({ example: 2 }),
     verseNumber: z.number().int().positive().openapi({ example: 255 }),
     sourceId: z.number().int().positive().optional(),
-    fingerprint: z.string().min(8).max(128).openapi({ example: "a1b2c3d4e5f6" }),
-    turnstileToken: z.string().min(1).openapi({ example: "0.turnstile_token_here" }),
+    fingerprint: z
+      .string()
+      .min(8)
+      .max(128)
+      .openapi({ example: "a1b2c3d4e5f6" }),
+    turnstileToken: z
+      .string()
+      .min(1)
+      .openapi({ example: "0.turnstile_token_here" }),
     reportType: z.enum(["quick", "detailed"]).openapi({ example: "quick" }),
     categories: z
       .array(
-        z.enum(["typo", "missing_words", "wrong_translation", "footnote_issue"]),
+        z.enum([
+          "typo",
+          "missing_words",
+          "wrong_translation",
+          "footnote_issue",
+        ]),
       )
       .optional()
       .openapi({ example: ["typo"] }),

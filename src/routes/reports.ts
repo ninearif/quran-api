@@ -150,9 +150,7 @@ reports.openapi(
           translationId: translation[0].id,
           fingerprint: body.fingerprint,
           reportType: body.reportType,
-          categories: body.categories
-            ? JSON.stringify(body.categories)
-            : null,
+          categories: body.categories ? JSON.stringify(body.categories) : null,
           suggestedText: body.suggestedText?.trim() ?? null,
           suggestedFootnotes: body.suggestedFootnotes
             ? JSON.stringify(body.suggestedFootnotes)
@@ -165,10 +163,7 @@ reports.openapi(
         })
         .returning({ id: issueReports.id });
 
-      return c.json(
-        { success: true as const, data: { id: inserted.id } },
-        201,
-      );
+      return c.json({ success: true as const, data: { id: inserted.id } }, 201);
     } catch (e) {
       console.error("Failed to insert report:", e);
       return c.json(

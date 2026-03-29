@@ -545,7 +545,6 @@ app.get("/verse-words/:surahId", async (c) => {
     }
 
     // Fallback: Import local static file
-    // @ts-ignore - Dynamic import for local development
     const localData = await import(`../data/quran-words/${numericId}.json`);
     return c.json({ success: true, data: localData.default || localData });
   } catch (e) {

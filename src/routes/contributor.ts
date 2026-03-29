@@ -444,8 +444,12 @@ contributor.openapi(
     },
   }),
   async (c) => {
-    const { arabicText: rawArabicText, language, excludeSurahNumber, excludeVerseNumber } =
-      c.req.valid("query");
+    const {
+      arabicText: rawArabicText,
+      language,
+      excludeSurahNumber,
+      excludeVerseNumber,
+    } = c.req.valid("query");
     const arabicText = rawArabicText.normalize("NFC");
     const db = drizzle(c.env.DB);
 
@@ -480,7 +484,11 @@ contributor.openapi(
           AND TRIM(meaning) != ''
       `;
 
-      const bindParams: any[] = [arabicText, excludeSurahNumber, excludeVerseNumber];
+      const bindParams: (string | number)[] = [
+        arabicText,
+        excludeSurahNumber,
+        excludeVerseNumber,
+      ];
 
       if (language) {
         sql += ` AND language = ?`;
@@ -489,12 +497,16 @@ contributor.openapi(
 
       sql += ` ORDER BY surah_number, verse_number, word_position LIMIT 50`;
 
-      const words = await c.env.DB.prepare(sql).bind(...bindParams).all();
+      const words = await c.env.DB.prepare(sql)
+        .bind(...bindParams)
+        .all();
 
       return c.json(
         {
           success: true as const,
-          data: words.results as unknown as z.infer<typeof WordTranslationSchema>[],
+          data: words.results as unknown as z.infer<
+            typeof WordTranslationSchema
+          >[],
         },
         200,
       );
@@ -506,7 +518,11 @@ contributor.openapi(
       .select()
       .from(wordTranslations)
       .where(and(...conditions))
-      .orderBy(wordTranslations.surahNumber, wordTranslations.verseNumber, wordTranslations.wordPosition)
+      .orderBy(
+        wordTranslations.surahNumber,
+        wordTranslations.verseNumber,
+        wordTranslations.wordPosition,
+      )
       .limit(50)
       .all();
 
@@ -917,14 +933,11 @@ contributor.openapi(
         },
         description: "Paginated word translations",
       },
-      401: {
-        content: { "application/json": { schema: ErrorSchema } },
-        description: "Unauthorized",
-      },
     },
   }),
   async (c) => {
-    const { surahNumber, verseNumber, language, status, page, pageSize } = c.req.valid("query");
+    const { surahNumber, verseNumber, language, status, page, pageSize } =
+      c.req.valid("query");
 
     // Build WHERE clause
     const conditions: string[] = [];
@@ -947,7 +960,8 @@ contributor.openapi(
       params.push(status);
     }
 
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
     // Get total count
     const countQuery = `
@@ -1021,11 +1035,13 @@ contributor.openapi(
       }),
       body: {
         content: {
-          "application/json": z.object({
-            meaning: z.string().optional(),
-            transliteration: z.string().optional(),
-            status: z.enum(["pending", "approved", "rejected"]).optional(),
-          }),
+          "application/json": {
+            schema: z.object({
+              meaning: z.string().optional(),
+              transliteration: z.string().optional(),
+              status: z.enum(["pending", "approved", "rejected"]).optional(),
+            }),
+          },
         },
         required: true,
       },
@@ -1063,7 +1079,7 @@ contributor.openapi(
 
     // Check if word translation exists
     const existing = await c.env.DB.prepare(
-      "SELECT id FROM word_translations WHERE id = ?"
+      "SELECT id FROM word_translations WHERE id = ?",
     )
       .bind(numericId)
       .first<{ id: number }>();
@@ -1071,7 +1087,7 @@ contributor.openapi(
     if (!existing) {
       return c.json(
         { success: false as const, message: "Word translation not found" },
-        404
+        404,
       );
     }
 
@@ -1095,7 +1111,7 @@ contributor.openapi(
     if (updates.length === 0) {
       return c.json(
         { success: false as const, message: "No fields to update" },
-        400
+        400,
       );
     }
 
@@ -1103,14 +1119,14 @@ contributor.openapi(
     params.push(numericId);
 
     await c.env.DB.prepare(
-      `UPDATE word_translations SET ${updates.join(", ")} WHERE id = ?`
+      `UPDATE word_translations SET ${updates.join(", ")} WHERE id = ?`,
     )
       .bind(...params)
       .run();
 
     return c.json(
       { success: true as const, message: "Word translation updated" },
-      200
+      200,
     );
   },
 );
@@ -1157,7 +1173,7 @@ contributor.openapi(
 
     // Check if word translation exists
     const existing = await c.env.DB.prepare(
-      "SELECT id FROM word_translations WHERE id = ?"
+      "SELECT id FROM word_translations WHERE id = ?",
     )
       .bind(numericId)
       .first<{ id: number }>();
@@ -1165,7 +1181,7 @@ contributor.openapi(
     if (!existing) {
       return c.json(
         { success: false as const, message: "Word translation not found" },
-        404
+        404,
       );
     }
 
@@ -1175,7 +1191,7 @@ contributor.openapi(
 
     return c.json(
       { success: true as const, message: "Word translation deleted" },
-      200
+      200,
     );
   },
 );
@@ -1212,16 +1228,12 @@ contributor.openapi(
                   surah_number: z.number(),
                   translated: z.number(),
                   pending: z.number(),
-                })
+                }),
               ),
             }),
           },
         },
         description: "Per-surah word translation progress",
-      },
-      401: {
-        content: { "application/json": { schema: ErrorSchema } },
-        description: "Unauthorized",
       },
     },
   }),
@@ -1239,20 +1251,20 @@ contributor.openapi(
       FROM word_translations
       WHERE language = ?
       GROUP BY surah_number
-      ORDER BY surah_number`
+      ORDER BY surah_number`,
     )
       .bind(langFilter)
       .all();
 
     return c.json({
       success: true as const,
-      data: (rows.results || []).map((r: any) => ({
+      data: (rows.results || []).map((r: Record<string, unknown>) => ({
         surah_number: r.surah_number as number,
         translated: (r.translated as number) || 0,
         pending: (r.pending as number) || 0,
       })),
     });
-  }
+  },
 );
 
 export default contributor;
