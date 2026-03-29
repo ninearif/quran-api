@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/quran-th/quran-api/compare/v1.4.1...v1.5.0) (2026-03-29)
+
+
+### Features
+
+* add `surah_meaning_thai` prop to surahs ([9c29322](https://github.com/quran-th/quran-api/commit/9c2932220759fc0da127f608192545f106faf667))
+
 ## [1.4.1](https://github.com/quran-th/quran-api/compare/v1.4.0...v1.4.1) (2026-03-29)
 
 
