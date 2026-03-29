@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/quran-th/quran-api/compare/v1.3.1...v1.4.0) (2026-03-29)
+
+
+### Features
+
+* add public report endpoints with Turnstile anti-spam ([8c9bda7](https://github.com/quran-th/quran-api/commit/8c9bda7354d20ddcbb682bf2d79ca7bc43931d58))
+
 ## [1.3.1](https://github.com/quran-th/quran-api/compare/v1.3.0...v1.3.1) (2026-03-09)
 
 
