@@ -1,7 +1,7 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { drizzle } from "drizzle-orm/d1";
 import { eq, ne, and, desc } from "drizzle-orm";
-import { contributions, wordTranslations } from "../db/schema";
+import { contributions, issueReports, wordTranslations } from "../db/schema";
 import { requireAuth, requireActiveOnWrite } from "../middleware/auth";
 import type { JwtPayload } from "../utils/jwt";
 import type { VerseDetailSchema } from "../openapi/schemas";
@@ -892,6 +892,231 @@ contributor.openapi(
         data: result.results as Record<string, unknown>[],
       },
       200,
+    );
+  },
+);
+
+// ─── GET /contributor/issues/:surahNumber/:verseNumber/reports ────────────────
+
+contributor.openapi(
+  createRoute({
+    method: "get",
+    path: "/issues/{surahNumber}/{verseNumber}/reports",
+    tags: ["Contributor"],
+    summary: "List individual reports for a specific verse",
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: z.object({
+        surahNumber: z.coerce.number().int().min(1).max(114),
+        verseNumber: z.coerce.number().int().positive(),
+      }),
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(z.record(z.string(), z.unknown())),
+            }),
+          },
+        },
+        description: "Reports for the verse",
+      },
+      401: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Unauthorized",
+      },
+    },
+  }),
+  async (c) => {
+    const { surahNumber, verseNumber } = c.req.valid("param");
+
+    const reportsQuery = `
+      SELECT
+        ir.id,
+        ir.report_type,
+        ir.categories,
+        ir.suggested_text,
+        ir.suggested_footnotes,
+        ir.contact_name,
+        ir.status,
+        ir.created_at,
+        ir.source_id,
+        ir.verse_translation_id
+      FROM issue_reports ir
+      WHERE ir.surah_number = ? AND ir.verse_number = ?
+      ORDER BY ir.created_at DESC
+    `;
+
+    const result = await c.env.DB.prepare(reportsQuery)
+      .bind(surahNumber, verseNumber)
+      .all();
+
+    // Fetch current translation (default source) for diff comparison
+    const vtQuery = `
+      SELECT vt.id AS verse_translation_id, vt.translation_text
+      FROM verse_translations vt
+      JOIN translation_sources ts ON ts.id = vt.source_id
+      WHERE vt.surah_number = ? AND vt.verse_number = ? AND ts.is_default = 1
+      LIMIT 1
+    `;
+    const vt = await c.env.DB.prepare(vtQuery)
+      .bind(surahNumber, verseNumber)
+      .first<{ verse_translation_id: number; translation_text: string }>();
+
+    // Fetch current footnotes for the default translation
+    let currentFootnotes: Record<string, unknown>[] = [];
+    if (vt) {
+      const fnQuery = `
+        SELECT footnote_number, text
+        FROM translation_footnotes
+        WHERE verse_translation_id = ?
+        ORDER BY footnote_number ASC
+      `;
+      const fnResult = await c.env.DB.prepare(fnQuery)
+        .bind(vt.verse_translation_id)
+        .all();
+      currentFootnotes = fnResult.results as Record<string, unknown>[];
+    }
+
+    return c.json(
+      {
+        success: true as const,
+        data: {
+          reports: result.results as Record<string, unknown>[],
+          currentTranslation: vt?.translation_text ?? null,
+          verseTranslationId: vt?.verse_translation_id ?? null,
+          currentFootnotes,
+        },
+      },
+      200,
+    );
+  },
+);
+
+// ─── POST /contributor/issues/:reportId/promote ──────────────────────────────
+
+contributor.openapi(
+  createRoute({
+    method: "post",
+    path: "/issues/{reportId}/promote",
+    tags: ["Contributor"],
+    summary: "Promote an issue report into a pending contribution for the admin queue",
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: z.object({
+        reportId: z.coerce.number().int().positive(),
+      }),
+    },
+    responses: {
+      201: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              data: z.record(z.string(), z.unknown()),
+            }),
+          },
+        },
+        description: "Contribution created from report",
+      },
+      400: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Report has no suggested text",
+      },
+      401: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Unauthorized",
+      },
+      404: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "Report or verse not found",
+      },
+    },
+  }),
+  async (c) => {
+    const { reportId } = c.req.valid("param");
+    const payload = c.get("contributor");
+    const db = drizzle(c.env.DB);
+
+    // Fetch the report
+    const report = await c.env.DB.prepare(
+      `SELECT id, surah_number, verse_number, suggested_text, source_id, verse_translation_id, status
+       FROM issue_reports WHERE id = ? LIMIT 1`,
+    )
+      .bind(reportId)
+      .first<{
+        id: number;
+        surah_number: number;
+        verse_number: number;
+        suggested_text: string | null;
+        source_id: number | null;
+        verse_translation_id: number | null;
+        status: string;
+      }>();
+
+    if (!report) {
+      return c.json({ success: false as const, message: "Report not found" }, 404);
+    }
+
+    if (!report.suggested_text?.trim()) {
+      return c.json(
+        { success: false as const, message: "Report has no suggested text to promote" },
+        400,
+      );
+    }
+
+    // Resolve verse_translation_id if not stored on the report
+    let vtId = report.verse_translation_id;
+    if (!vtId) {
+      const vt = await c.env.DB.prepare(
+        `SELECT vt.id FROM verse_translations vt
+         JOIN translation_sources ts ON ts.id = vt.source_id
+         WHERE vt.surah_number = ? AND vt.verse_number = ? AND ts.is_default = 1
+         LIMIT 1`,
+      )
+        .bind(report.surah_number, report.verse_number)
+        .first<{ id: number }>();
+
+      if (!vt) {
+        return c.json({ success: false as const, message: "Verse translation not found" }, 404);
+      }
+      vtId = vt.id;
+    }
+
+    // Get source_id from the verse_translation
+    const vtRow = await c.env.DB.prepare(
+      `SELECT source_id FROM verse_translations WHERE id = ? LIMIT 1`,
+    )
+      .bind(vtId)
+      .first<{ source_id: number }>();
+
+    if (!vtRow) {
+      return c.json({ success: false as const, message: "Verse translation not found" }, 404);
+    }
+
+    // Create the contribution
+    const [inserted] = await db
+      .insert(contributions)
+      .values({
+        verseTranslationId: vtId,
+        sourceId: vtRow.source_id,
+        suggestedTranslation: report.suggested_text.trim(),
+        contributorName: payload.email,
+        contributorId: payload.sub,
+      })
+      .returning();
+
+    // Mark the report as resolved
+    await db
+      .update(issueReports)
+      .set({ status: "resolved" })
+      .where(eq(issueReports.id, reportId));
+
+    return c.json(
+      { success: true as const, data: inserted as Record<string, unknown> },
+      201,
     );
   },
 );

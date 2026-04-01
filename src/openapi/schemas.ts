@@ -298,6 +298,26 @@ export const ReportCheckResponseSchema = z
   })
   .openapi("ReportCheckResponse");
 
+// ─── Juzs (Public) ───────────────────────────────────────────────────────────
+
+export const JuzSchema = z
+  .object({
+    number: z.number().openapi({ example: 1 }),
+    verse_mapping: z
+      .record(z.string(), z.string())
+      .openapi({ example: { "1": "1-7", "2": "1-141" } }),
+    verses_count: z.number().openapi({ example: 148 }),
+    surahs: z.array(
+      z.object({
+        id: z.number(),
+        name_thai: z.string(),
+        name_arabic: z.string(),
+        verses: z.string().openapi({ example: "1-141" }),
+      }),
+    ),
+  })
+  .openapi("Juz");
+
 // ─── Surahs (Public) ──────────────────────────────────────────────────────────
 
 export const SurahVerseSchema = z

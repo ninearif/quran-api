@@ -6,7 +6,7 @@ export const surahs = [
     name_thai: "อัล-ฟาติฮะฮ์",
     name_meaning_thai: "ปฐมบท",
     verses_count: 7,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const surahs = [
     name_thai: "อัล-บะเกาะเราะฮ์",
     name_meaning_thai: "วัวตัวหนึ่ง",
     verses_count: 286,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const surahs = [
     name_thai: "อาล อิมรอน",
     name_meaning_thai: "วงศ์วานของอิมรอน",
     verses_count: 200,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ export const surahs = [
     name_thai: "อัน-นิซาอ์",
     name_meaning_thai: "บรรดาสตรี",
     verses_count: 176,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 5,
@@ -42,7 +42,7 @@ export const surahs = [
     name_thai: "อัล-มาอิดะฮ์",
     name_meaning_thai: "โต๊ะสำรับอาหาร",
     verses_count: 120,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 6,
@@ -51,7 +51,7 @@ export const surahs = [
     name_thai: "อัล-อันอาม",
     name_meaning_thai: "ปศุสัตว์",
     verses_count: 165,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 7,
@@ -60,7 +60,7 @@ export const surahs = [
     name_thai: "อัล-อะอ์รอฟ",
     name_meaning_thai: "กำแพงคั่น",
     verses_count: 206,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 8,
@@ -69,7 +69,7 @@ export const surahs = [
     name_thai: "อัล-อันฟาล",
     name_meaning_thai: "ทรัพย์เชลย",
     verses_count: 75,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 9,
@@ -78,7 +78,7 @@ export const surahs = [
     name_thai: "อัต-เตาบะฮ์",
     name_meaning_thai: "การกลับเนื้อกลับตัว",
     verses_count: 129,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ export const surahs = [
     name_thai: "ยูนุส",
     name_meaning_thai: "ศาสนทูตยูนุส",
     verses_count: 109,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ export const surahs = [
     name_thai: "ฮูด",
     name_meaning_thai: "ศาสนทูตฮูด",
     verses_count: 123,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ export const surahs = [
     name_thai: "ยูซุฟ",
     name_meaning_thai: "ศาสนทูตยูซุฟ",
     verses_count: 111,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 13,
@@ -114,7 +114,7 @@ export const surahs = [
     name_thai: "อัร-เราะอ์ด",
     name_meaning_thai: "ฟ้าร้อง",
     verses_count: 43,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 14,
@@ -123,7 +123,7 @@ export const surahs = [
     name_thai: "อิบรอฮีม",
     name_meaning_thai: "ศาสนทูตอิบรอฮีม",
     verses_count: 52,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 15,
@@ -132,7 +132,7 @@ export const surahs = [
     name_thai: "อัล-หิจญร์",
     name_meaning_thai: "หุบเขาหิน",
     verses_count: 99,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 16,
@@ -141,7 +141,7 @@ export const surahs = [
     name_thai: "อัน-นะห์ล",
     name_meaning_thai: "ผึ้ง",
     verses_count: 128,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 17,
@@ -150,7 +150,7 @@ export const surahs = [
     name_thai: "อัล-อิสรออ์",
     name_meaning_thai: "การเดินทางกลางคืน",
     verses_count: 111,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 18,
@@ -159,7 +159,7 @@ export const surahs = [
     name_thai: "อัล-กะฮ์ฟ",
     name_meaning_thai: "ถ้ำ",
     verses_count: 110,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 19,
@@ -168,7 +168,7 @@ export const surahs = [
     name_thai: "มัรยัม",
     name_meaning_thai: "มัรยัม (แมรี่)",
     verses_count: 98,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 20,
@@ -177,7 +177,7 @@ export const surahs = [
     name_thai: "ฏอฮา",
     name_meaning_thai: "ฏอฮา",
     verses_count: 135,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 21,
@@ -186,7 +186,7 @@ export const surahs = [
     name_thai: "อัล-อันบิยาอ์",
     name_meaning_thai: "บรรดานบี (ศาสนทูต)",
     verses_count: 112,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 22,
@@ -195,7 +195,7 @@ export const surahs = [
     name_thai: "อัล-ฮัจญ์",
     name_meaning_thai: "การแสวงบุญ (ฮัจญ์)",
     verses_count: 78,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 23,
@@ -204,7 +204,7 @@ export const surahs = [
     name_thai: "อัล-มุอ์มินูน",
     name_meaning_thai: "บรรดาผู้ศรัทธา",
     verses_count: 118,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 24,
@@ -213,7 +213,7 @@ export const surahs = [
     name_thai: "อัน-นูร",
     name_meaning_thai: "แสงสว่าง",
     verses_count: 64,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 25,
@@ -222,7 +222,7 @@ export const surahs = [
     name_thai: "อัล-ฟุรกอน",
     name_meaning_thai: "สิ่งจำแนก (ความจริงจากความเท็จ)",
     verses_count: 77,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 26,
@@ -231,7 +231,7 @@ export const surahs = [
     name_thai: "อัช-ชุอะรออ์",
     name_meaning_thai: "บรรดากวี",
     verses_count: 227,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 27,
@@ -240,7 +240,7 @@ export const surahs = [
     name_thai: "อัน-นัมล",
     name_meaning_thai: "มด",
     verses_count: 93,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 28,
@@ -249,7 +249,7 @@ export const surahs = [
     name_thai: "อัล-เกาะศอศ",
     name_meaning_thai: "เรื่องเล่า",
     verses_count: 88,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 29,
@@ -258,7 +258,7 @@ export const surahs = [
     name_thai: "อัล-อังกะบูต",
     name_meaning_thai: "แมงมุม",
     verses_count: 69,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 30,
@@ -267,7 +267,7 @@ export const surahs = [
     name_thai: "อัร-รูม",
     name_meaning_thai: "จักรวรรดิโรมัน",
     verses_count: 60,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 31,
@@ -276,7 +276,7 @@ export const surahs = [
     name_thai: "ลุกมาน",
     name_meaning_thai: "ลุกมาน",
     verses_count: 34,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 32,
@@ -285,7 +285,7 @@ export const surahs = [
     name_thai: "อัส-ซัจญ์ดะฮ์",
     name_meaning_thai: "การสุญูด (กราบ)",
     verses_count: 30,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 33,
@@ -294,7 +294,7 @@ export const surahs = [
     name_thai: "อัล-อะห์ซาบ",
     name_meaning_thai: "กองกำลังพันธมิตร",
     verses_count: 73,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 34,
@@ -303,7 +303,7 @@ export const surahs = [
     name_thai: "ซะบะอ์",
     name_meaning_thai: "ชาวเมืองสะบะอ์",
     verses_count: 54,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 35,
@@ -312,7 +312,7 @@ export const surahs = [
     name_thai: "ฟาฏิร",
     name_meaning_thai: "ผู้ทรงสร้างสรรค์",
     verses_count: 45,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 36,
@@ -321,7 +321,7 @@ export const surahs = [
     name_thai: "ยาซีน",
     name_meaning_thai: "ยาซีน",
     verses_count: 83,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 37,
@@ -330,7 +330,7 @@ export const surahs = [
     name_thai: "อัศ-ศอฟฟาด",
     name_meaning_thai: "เหล่าผู้เรียงรายเป็นทิวแถว",
     verses_count: 182,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 38,
@@ -339,7 +339,7 @@ export const surahs = [
     name_thai: "ศอด",
     name_meaning_thai: "ศอด",
     verses_count: 88,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 39,
@@ -348,7 +348,7 @@ export const surahs = [
     name_thai: "อัซ-ซุมัร",
     name_meaning_thai: "บรรดากลุ่มชน",
     verses_count: 75,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 40,
@@ -357,7 +357,7 @@ export const surahs = [
     name_thai: "ฆอฟิร",
     name_meaning_thai: "ผู้ทรงอภัย",
     verses_count: 85,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 41,
@@ -366,7 +366,7 @@ export const surahs = [
     name_thai: "ฟุศศิลัต",
     name_meaning_thai: "การแจกแจงอย่างถี่ถ้วน",
     verses_count: 54,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 42,
@@ -375,7 +375,7 @@ export const surahs = [
     name_thai: "อัช-ชูรอ",
     name_meaning_thai: "การปรึกษาหารือ",
     verses_count: 53,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 43,
@@ -384,7 +384,7 @@ export const surahs = [
     name_thai: "อัซ-ซุครุฟ",
     name_meaning_thai: "เครื่องประดับทองคำ",
     verses_count: 89,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 44,
@@ -393,7 +393,7 @@ export const surahs = [
     name_thai: "อัด-ดุคอน",
     name_meaning_thai: "กลุ่มควัน",
     verses_count: 59,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 45,
@@ -402,7 +402,7 @@ export const surahs = [
     name_thai: "อัล-ญาษิยะฮ์",
     name_meaning_thai: "ผู้นั่งคุกเข่า",
     verses_count: 37,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 46,
@@ -411,7 +411,7 @@ export const surahs = [
     name_thai: "อัล-อะห์กอฟ",
     name_meaning_thai: "เนินทรายโค้ง",
     verses_count: 35,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 47,
@@ -420,7 +420,7 @@ export const surahs = [
     name_thai: "มุฮัมมัด",
     name_meaning_thai: "ศาสนทูตมุฮัมมัด",
     verses_count: 38,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 48,
@@ -429,7 +429,7 @@ export const surahs = [
     name_thai: "อัล-ฟัตห์",
     name_meaning_thai: "การพิชิตชัย",
     verses_count: 29,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 49,
@@ -438,7 +438,7 @@ export const surahs = [
     name_thai: "อัล-หุญุรอต",
     name_meaning_thai: "ห้องหับ",
     verses_count: 18,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 50,
@@ -447,7 +447,7 @@ export const surahs = [
     name_thai: "กอฟ",
     name_meaning_thai: "กอฟ",
     verses_count: 45,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 51,
@@ -456,7 +456,7 @@ export const surahs = [
     name_thai: "อัซ-ซาริยาต",
     name_meaning_thai: "ลมพัด",
     verses_count: 60,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 52,
@@ -465,7 +465,7 @@ export const surahs = [
     name_thai: "อัฏ-ฏูร",
     name_meaning_thai: "ภูเขาฏูร",
     verses_count: 49,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 53,
@@ -474,7 +474,7 @@ export const surahs = [
     name_thai: "อัน-นัจญ์ม",
     name_meaning_thai: "ดวงดาว",
     verses_count: 62,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 54,
@@ -483,7 +483,7 @@ export const surahs = [
     name_thai: "อัล-เกาะมัร",
     name_meaning_thai: "ดวงจันทร์",
     verses_count: 55,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 55,
@@ -492,7 +492,7 @@ export const surahs = [
     name_thai: "อัร-เราะห์มาน",
     name_meaning_thai: "ผู้ทรงเมตตา",
     verses_count: 78,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 56,
@@ -501,7 +501,7 @@ export const surahs = [
     name_thai: "อัล-วากิอะฮ์",
     name_meaning_thai: "เหตุการณ์ที่ไม่อาจหลีกหนีได้",
     verses_count: 96,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 57,
@@ -510,7 +510,7 @@ export const surahs = [
     name_thai: "อัล-หะดีด",
     name_meaning_thai: "โลหะ",
     verses_count: 29,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 58,
@@ -519,7 +519,7 @@ export const surahs = [
     name_thai: "อัล-มุญาดะละฮ์",
     name_meaning_thai: "สตรีผู้โต้แย้ง",
     verses_count: 22,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 59,
@@ -528,7 +528,7 @@ export const surahs = [
     name_thai: "อัล-หัชร์",
     name_meaning_thai: "การเนรเทศ",
     verses_count: 24,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 60,
@@ -537,7 +537,7 @@ export const surahs = [
     name_thai: "อัล-มุ่มตะหะนะฮ์",
     name_meaning_thai: "สตรีผู้ถูกทดสอบ",
     verses_count: 13,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 61,
@@ -546,7 +546,7 @@ export const surahs = [
     name_thai: "อัศ-ศ็อฟ",
     name_meaning_thai: "แถวแนว",
     verses_count: 14,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 62,
@@ -555,7 +555,7 @@ export const surahs = [
     name_thai: "อัล-ญุมุอะฮ์",
     name_meaning_thai: "การรวมตัว วันศุกร์",
     verses_count: 11,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 63,
@@ -564,7 +564,7 @@ export const surahs = [
     name_thai: "อัล-มุนาฟิกูน",
     name_meaning_thai: "บรรดามุนาฟิก",
     verses_count: 11,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 64,
@@ -573,7 +573,7 @@ export const surahs = [
     name_thai: "อัต-ตะฆอบุน",
     name_meaning_thai: "การสูญเสียร่วมกัน",
     verses_count: 18,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 65,
@@ -582,7 +582,7 @@ export const surahs = [
     name_thai: "อัฏ-เฏาะลาก",
     name_meaning_thai: "การหย่าร้าง",
     verses_count: 12,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 66,
@@ -591,7 +591,7 @@ export const surahs = [
     name_thai: "อัต-ตะห์รีม",
     name_meaning_thai: "การห้าม",
     verses_count: 12,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 67,
@@ -600,7 +600,7 @@ export const surahs = [
     name_thai: "อัล-มุลก์",
     name_meaning_thai: "ผู้ทรงอำนาจสูงสุด",
     verses_count: 30,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 68,
@@ -609,7 +609,7 @@ export const surahs = [
     name_thai: "อัล-เกาะลัม",
     name_meaning_thai: "ปากกา",
     verses_count: 52,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 69,
@@ -618,7 +618,7 @@ export const surahs = [
     name_thai: "อัล-หากเกาะฮ์",
     name_meaning_thai: "ความจริงที่ไม่อาจปฏิเสธ",
     verses_count: 52,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 70,
@@ -627,7 +627,7 @@ export const surahs = [
     name_thai: "อัล-มะอาริจญ์",
     name_meaning_thai: "ชั้นฟ้าสู่เบื้องบน",
     verses_count: 44,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 71,
@@ -636,7 +636,7 @@ export const surahs = [
     name_thai: "นูห์",
     name_meaning_thai: "ศาสนทูตนูห์",
     verses_count: 28,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 72,
@@ -645,7 +645,7 @@ export const surahs = [
     name_thai: "อัล-ญิน",
     name_meaning_thai: "ญิน",
     verses_count: 28,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 73,
@@ -654,7 +654,7 @@ export const surahs = [
     name_thai: "อัล-มุซซัมมิล",
     name_meaning_thai: "ผู้คลุมตัวอยู่ใต้ผืนผ้า",
     verses_count: 20,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 74,
@@ -663,7 +663,7 @@ export const surahs = [
     name_thai: "อัล-มุดดัษษิร",
     name_meaning_thai: "ผู้ห่มผ้า",
     verses_count: 56,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 75,
@@ -672,7 +672,7 @@ export const surahs = [
     name_thai: "อัล-กิยามะฮ์",
     name_meaning_thai: "วันแห่งการฟื้นคืนชีพ",
     verses_count: 40,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 76,
@@ -681,7 +681,7 @@ export const surahs = [
     name_thai: "อัล-อินซาน",
     name_meaning_thai: "มนุษย์",
     verses_count: 31,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 77,
@@ -690,7 +690,7 @@ export const surahs = [
     name_thai: "อัล-มุรสะลาต",
     name_meaning_thai: "เหล่าทูตผู้ส่งสาร",
     verses_count: 50,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 78,
@@ -699,7 +699,7 @@ export const surahs = [
     name_thai: "อัน-นะบะอ์",
     name_meaning_thai: "ข่าวอันสำคัญ",
     verses_count: 40,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 79,
@@ -708,7 +708,7 @@ export const surahs = [
     name_thai: "อัน-นาซิอาต",
     name_meaning_thai: "ผู้ฉุดกระชากวิญญาณ",
     verses_count: 46,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 80,
@@ -717,7 +717,7 @@ export const surahs = [
     name_thai: "อะบะสะ",
     name_meaning_thai: "ใบหน้าบึ้งตึง",
     verses_count: 42,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 81,
@@ -726,7 +726,7 @@ export const surahs = [
     name_thai: "อัต-ตักวีร",
     name_meaning_thai: "การม้วนตัว",
     verses_count: 29,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 82,
@@ -735,7 +735,7 @@ export const surahs = [
     name_thai: "อัล-อินฟิฏอร",
     name_meaning_thai: "การแตกสลาย",
     verses_count: 19,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 83,
@@ -744,7 +744,7 @@ export const surahs = [
     name_thai: "อัล-มุฏ็อฟฟิฟีน",
     name_meaning_thai: "บรรดาผู้โกงการตวงวัด",
     verses_count: 36,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 84,
@@ -753,7 +753,7 @@ export const surahs = [
     name_thai: "อัล-อินชิกอก",
     name_meaning_thai: "การแยกออก (ของชั้นฟ้า)",
     verses_count: 25,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 85,
@@ -762,7 +762,7 @@ export const surahs = [
     name_thai: "อัล-บุรูจญ์",
     name_meaning_thai: "กลุ่มดาว",
     verses_count: 22,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 86,
@@ -771,7 +771,7 @@ export const surahs = [
     name_thai: "อัฏ-ฏอริก",
     name_meaning_thai: "ดวงดาวที่มาเยือนในค่ำคืน",
     verses_count: 17,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 87,
@@ -780,7 +780,7 @@ export const surahs = [
     name_thai: "อัล-อะอ์ลา",
     name_meaning_thai: "ผู้ทรงสูงส่ง",
     verses_count: 19,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 88,
@@ -789,7 +789,7 @@ export const surahs = [
     name_thai: "อัล-ฆอชิยะฮ์",
     name_meaning_thai: "วันที่ความกลัวแผ่คลุม",
     verses_count: 26,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 89,
@@ -798,7 +798,7 @@ export const surahs = [
     name_thai: "อัล-ฟัจญร์",
     name_meaning_thai: "อรุณรุ่ง",
     verses_count: 30,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 90,
@@ -807,7 +807,7 @@ export const surahs = [
     name_thai: "อัล-บะลัด",
     name_meaning_thai: "เมือง",
     verses_count: 20,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 91,
@@ -816,16 +816,16 @@ export const surahs = [
     name_thai: "อัช-ชัมส์",
     name_meaning_thai: "ดวงอาทิตย์",
     verses_count: 15,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 92,
     name_simple: "Al-Layl",
     name_arabic: "الليل",
     name_thai: "อัล-ลัยล์",
-    name_meaning_thai: "กลางคืน",
+    name_meaning_thai: "ยามค่ำคืน",
     verses_count: 21,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 93,
@@ -834,7 +834,7 @@ export const surahs = [
     name_thai: "อัฎ-ฎุฮา",
     name_meaning_thai: "ยามเช้า",
     verses_count: 11,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 94,
@@ -843,7 +843,7 @@ export const surahs = [
     name_thai: "อัช-ชัรห์",
     name_meaning_thai: "การเปิดหัวใจ",
     verses_count: 8,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 95,
@@ -852,7 +852,7 @@ export const surahs = [
     name_thai: "อัต-ตีน",
     name_meaning_thai: "ต้นมะเดื่อ",
     verses_count: 8,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 96,
@@ -861,7 +861,7 @@ export const surahs = [
     name_thai: "อัล-อะลัก",
     name_meaning_thai: "ก้อนเลือด",
     verses_count: 19,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 97,
@@ -870,7 +870,7 @@ export const surahs = [
     name_thai: "อัล-ก็อดร์",
     name_meaning_thai: "คืนอัลก็อดร์อันประเสริฐ",
     verses_count: 5,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 98,
@@ -879,7 +879,7 @@ export const surahs = [
     name_thai: "อัล-บัยยินะฮ์",
     name_meaning_thai: "หลักฐานอันชัดแจ้ง",
     verses_count: 8,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 99,
@@ -888,7 +888,7 @@ export const surahs = [
     name_thai: "อัซ-ซัลซะละฮ์",
     name_meaning_thai: "แผ่นดินไหว",
     verses_count: 8,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 100,
@@ -897,7 +897,7 @@ export const surahs = [
     name_thai: "อัล-อาดิยาต",
     name_meaning_thai: "ม้าศึก",
     verses_count: 11,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 101,
@@ -906,7 +906,7 @@ export const surahs = [
     name_thai: "อัล-กอริอะฮ์",
     name_meaning_thai: "วันมหันตภัย",
     verses_count: 11,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 102,
@@ -915,7 +915,7 @@ export const surahs = [
     name_thai: "อัต-ตะกาษุร",
     name_meaning_thai: "การหมกมุ่นสะสมทรัพย์",
     verses_count: 8,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 103,
@@ -924,7 +924,7 @@ export const surahs = [
     name_thai: "อัล-อัศร์",
     name_meaning_thai: "กาลเวลาที่ล่วงเลย",
     verses_count: 3,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 104,
@@ -933,7 +933,7 @@ export const surahs = [
     name_thai: "อัล-ฮุมะซะฮ์",
     name_meaning_thai: "ผู้นินทาว่าร้าย",
     verses_count: 9,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 105,
@@ -942,7 +942,7 @@ export const surahs = [
     name_thai: "อัล-ฟีล",
     name_meaning_thai: "ช้าง",
     verses_count: 5,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 106,
@@ -951,7 +951,7 @@ export const surahs = [
     name_thai: "กุรอยช์",
     name_meaning_thai: "ชาวกุรอยช์",
     verses_count: 4,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 107,
@@ -960,7 +960,7 @@ export const surahs = [
     name_thai: "อัล-มาอูน",
     name_meaning_thai: "ปัจจัยอันน้อยนิด",
     verses_count: 7,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 108,
@@ -969,16 +969,16 @@ export const surahs = [
     name_thai: "อัล-เกาษัร",
     name_meaning_thai: "บ่อน้ำแห่งสวนสวรรค์",
     verses_count: 3,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 109,
     name_simple: "Al-Kafirun",
     name_arabic: "الكافرون",
     name_thai: "อัล-กาฟิรูน",
-    name_meaning_thai: "บรรดาผู้ปฏิเสธ",
+    name_meaning_thai: "บรรดาผู้ปฏิเสธศรัทธา",
     verses_count: 6,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 110,
@@ -987,7 +987,7 @@ export const surahs = [
     name_thai: "อัน-นัศร์",
     name_meaning_thai: "ความช่วยเหลือจากพระเจ้า",
     verses_count: 3,
-    revelation_place: "medinan",
+    revelation_place: "madaniyah",
   },
   {
     id: 111,
@@ -996,16 +996,16 @@ export const surahs = [
     name_thai: "อัล-มะซัด",
     name_meaning_thai: "เส้นใยต้นอินทผาลัม",
     verses_count: 5,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 112,
     name_simple: "Al-Ikhlas",
     name_arabic: "الإخلاص",
     name_thai: "อัล-อิคลาศ",
-    name_meaning_thai: "ความบริสุทธิ์ใจ",
+    name_meaning_thai: "ความบริสุทธิ์ (จากภาคีทั้งปวง)",
     verses_count: 4,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 113,
@@ -1014,7 +1014,7 @@ export const surahs = [
     name_thai: "อัล-ฟะลัก",
     name_meaning_thai: "ยามฟ้าสาง",
     verses_count: 5,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
   {
     id: 114,
@@ -1023,6 +1023,6 @@ export const surahs = [
     name_thai: "อัน-นาส",
     name_meaning_thai: "มนุษยชาติ",
     verses_count: 6,
-    revelation_place: "meccan",
+    revelation_place: "makkiyah",
   },
 ];

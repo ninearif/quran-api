@@ -6,6 +6,7 @@ import { eq, asc } from "drizzle-orm";
 import { quranTranslations, translationSources } from "./db/schema";
 
 import { surahs } from "./data/surahs";
+import { juzs } from "./data/juzs";
 import auth from "./routes/auth";
 import contributor from "./routes/contributor";
 import admin from "./routes/admin";
@@ -20,6 +21,7 @@ import {
   SurahVerseQuerySchema,
   VersesByKeysBodySchema,
   VersesByKeysResponseSchema,
+  JuzSchema,
 } from "./openapi/schemas";
 
 type MushafPageEntry = {
@@ -132,6 +134,61 @@ app.openapi(
       },
       200,
     ),
+);
+
+// ─── GET /juzs ───────────────────────────────────────────────────────────────
+// Returns static juz metadata for all 30 juz with surah info enriched from
+// the surahs data. No database query — data is bundled at build time.
+
+app.openapi(
+  createRoute({
+    method: "get",
+    path: "/juzs",
+    tags: ["Quran"],
+    summary: "List all 30 juz with verse mappings and surah info",
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              data: z.array(JuzSchema),
+            }),
+          },
+        },
+        description: "Juz list",
+      },
+    },
+  }),
+  (c) => {
+    const data = juzs.map((juz) => {
+      const juzSurahs = Object.entries(juz.verse_mapping).map(
+        ([surahId, verses]) => {
+          const surah = surahs.find((s) => s.id === Number(surahId));
+          return {
+            id: Number(surahId),
+            name_thai: surah?.name_thai ?? "",
+            name_arabic: surah?.name_arabic ?? "",
+            verses,
+          };
+        },
+      );
+      return {
+        number: juz.number,
+        verse_mapping: juz.verse_mapping,
+        verses_count: juz.verses_count,
+        surahs: juzSurahs,
+      };
+    });
+
+    return c.json(
+      {
+        success: true as const,
+        data: data as unknown as z.infer<typeof JuzSchema>[],
+      },
+      200,
+    );
+  },
 );
 
 // ─── GET /surahs/:id ──────────────────────────────────────────────────────────
