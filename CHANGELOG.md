@@ -1,3 +1,15 @@
+# [1.6.0](https://github.com/quran-th/quran-api/compare/v1.5.0...v1.6.0) (2026-04-01)
+
+
+### Bug Fixes
+
+* type errors ([799be89](https://github.com/quran-th/quran-api/commit/799be891deed23e6bd948d2891fc33adedd21145))
+
+
+### Features
+
+* add juz metadata api and issue to contribute api ([878e4d5](https://github.com/quran-th/quran-api/commit/878e4d518cd56248f54f82dad0e5f2a1db599d7a))
+
 # [1.5.0](https://github.com/quran-th/quran-api/compare/v1.4.1...v1.5.0) (2026-03-29)
 
 
