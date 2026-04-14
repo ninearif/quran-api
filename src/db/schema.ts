@@ -15,6 +15,8 @@ export const translationSources = sqliteTable("translation_sources", {
   language: text("language").notNull().default("th"),
   description: text("description"),
   isDefault: integer("is_default").notNull().default(0),
+  externalType: text("external_type"),
+  externalConfig: text("external_config"),
   createdAt: integer("created_at", { mode: "timestamp" }).default(
     sql`(strftime('%s', 'now'))`,
   ),

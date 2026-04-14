@@ -70,6 +70,7 @@ export const TranslationSourceSchema = z
     language: z.string().openapi({ example: "th" }),
     description: z.string().nullable(),
     is_default: z.number().openapi({ example: 1 }),
+    isExternal: z.boolean().openapi({ example: false }),
     created_at: z.union([z.string(), z.number()]).nullable(),
   })
   .openapi("TranslationSource");

@@ -7,6 +7,7 @@ import { quranTranslations, translationSources } from "./db/schema";
 
 import { surahs } from "./data/surahs";
 import { juzs } from "./data/juzs";
+import { revalidateExternalSource } from "./services/revalidation";
 import auth from "./routes/auth";
 import contributor from "./routes/contributor";
 import admin from "./routes/admin";
@@ -38,6 +39,7 @@ type Bindings = {
   JWT_SECRET: string;
   ASSETS_BASE_URL: string;
   TURNSTILE_SECRET_KEY: string;
+  REVALIDATION_DAYS: string;
 };
 
 // ─── App ──────────────────────────────────────────────────────────────────────
@@ -258,6 +260,64 @@ app.openapi(
         sourceId = defaultSource[0]?.id ?? 1;
       }
 
+      // Lazy revalidation for external sources
+      const revalidationDays = parseInt(c.env.REVALIDATION_DAYS || "0", 10);
+      if (revalidationDays > 0) {
+        const sourceRow = await db
+          .select({
+            id: translationSources.id,
+            externalType: translationSources.externalType,
+            externalConfig: translationSources.externalConfig,
+          })
+          .from(translationSources)
+          .where(eq(translationSources.id, sourceId))
+          .limit(1);
+
+        const src = sourceRow[0];
+        if (src?.externalType) {
+          // Synchronously cover the visible window so the first response
+          // always contains fresh translations. The service bails cheaply
+          // when nothing is missing/stale.
+          const windowStart = offset + 1;
+          const windowEnd = Math.min(offset + limit, surah.verses_count);
+          const windowVerseNumbers = Array.from(
+            { length: Math.max(0, windowEnd - windowStart + 1) },
+            (_, i) => windowStart + i,
+          );
+
+          if (windowVerseNumbers.length > 0) {
+            await revalidateExternalSource(
+              c.env.DB,
+              src,
+              numericId,
+              windowVerseNumbers,
+              revalidationDays,
+            );
+          }
+
+          // Prefetch one page ahead in the background so forward
+          // navigation is instant. Bounded to `limit` verses so it fits
+          // within the waitUntil budget.
+          const nextStart = windowEnd + 1;
+          const nextEnd = Math.min(windowEnd + limit, surah.verses_count);
+          if (nextStart <= nextEnd) {
+            const nextVerseNumbers = Array.from(
+              { length: nextEnd - nextStart + 1 },
+              (_, i) => nextStart + i,
+            );
+            c.executionCtx.waitUntil(
+              revalidateExternalSource(
+                c.env.DB,
+                src,
+                numericId,
+                nextVerseNumbers,
+                revalidationDays,
+              ),
+            );
+          }
+        }
+      }
+
       // Fetch Arabic verse text from quran_translations with pagination
       const arabicVerses = await db
         .select({
@@ -376,7 +436,9 @@ app.openapi(
         hasMore,
       };
 
-      c.header("Cache-Control", "public, max-age=3600");
+      // No long browser cache: responses can change as lazy revalidation
+      // populates missing external translations. Page-level ISR handles
+      // edge caching in production.
       return c.json(
         {
           success: true as const,
@@ -451,6 +513,45 @@ app.openapi(
           .where(eq(translationSources.isDefault, 1))
           .limit(1);
         sourceId = defaultSource[0]?.id ?? 1;
+      }
+
+      // Lazy revalidation for external sources (by-keys)
+      const revalidationDays = parseInt(c.env.REVALIDATION_DAYS || "0", 10);
+      if (revalidationDays > 0 && keys.length > 0) {
+        const sourceRow = await db
+          .select({
+            id: translationSources.id,
+            externalType: translationSources.externalType,
+            externalConfig: translationSources.externalConfig,
+          })
+          .from(translationSources)
+          .where(eq(translationSources.id, sourceId))
+          .limit(1);
+
+        const src = sourceRow[0];
+        if (src?.externalType) {
+          // Group keys by surah to check revalidation per surah
+          const surahGroups = new Map<number, number[]>();
+          for (const k of keys) {
+            const [s, v] = k.split(":").map(Number);
+            if (!surahGroups.has(s)) surahGroups.set(s, []);
+            surahGroups.get(s)!.push(v);
+          }
+
+          // Synchronously cover the requested keys (per-surah groups in
+          // parallel) so the response always contains fresh translations.
+          await Promise.all(
+            Array.from(surahGroups, ([surahNum, verses]) =>
+              revalidateExternalSource(
+                c.env.DB,
+                src,
+                surahNum,
+                verses,
+                revalidationDays,
+              ),
+            ),
+          );
+        }
       }
 
       // Parse requested keys: "surah:verse" -> { surah, verse }
@@ -688,10 +789,21 @@ app.openapi(
         .from(translationSources)
         .orderBy(asc(translationSources.id))
         .all();
+      const data = sources.map((s) => ({
+        id: s.id,
+        name: s.name,
+        short_name: s.shortName,
+        author: s.author,
+        language: s.language,
+        description: s.description,
+        is_default: s.isDefault,
+        isExternal: s.externalType !== null,
+        created_at: s.createdAt,
+      }));
       return c.json(
         {
           success: true as const,
-          data: sources as unknown as z.infer<typeof TranslationSourceSchema>[],
+          data: data as unknown as z.infer<typeof TranslationSourceSchema>[],
         },
         200,
       );
