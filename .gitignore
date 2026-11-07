@@ -34,3 +34,7 @@ pnpm-debug.log*
 # Temp files
 *.tmp
 *.temp
+
+# Generated Thai translation audio (never committed)
+scripts/data/translation-audio/
+scripts/data/mukhtasar-th-snapshot.json
