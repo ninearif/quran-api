@@ -1,3 +1,11 @@
+## [1.12.2](https://github.com/quran-th/quran-api/compare/v1.12.1...v1.12.2) (2026-11-08)
+
+
+### Bug Fixes
+
+* translate both divine names in Mukhtasar 1:3 ([4275f21](https://github.com/quran-th/quran-api/commit/4275f2192b7d02edd550c03ea1edd03e80d4a256))
+* translate both divine names in Mukhtasar 1:3 ([#4](https://github.com/quran-th/quran-api/issues/4)) ([286e0c7](https://github.com/quran-th/quran-api/commit/286e0c71ec4ea81717c6776fed6f248f2208987f))
+
 ## [1.12.1](https://github.com/quran-th/quran-api/compare/v1.12.0...v1.12.1) (2026-11-08)
 
 
