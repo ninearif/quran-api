@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/quran-th/quran-api/compare/v1.18.0...v1.19.0) (2026-11-08)
+
+
+### Features
+
+* accept an audio_issue report category ([f42d6a2](https://github.com/quran-th/quran-api/commit/f42d6a2906eec4621c31c4fbe0e0afd1939a2855))
+
 # [1.18.0](https://github.com/quran-th/quran-api/compare/v1.17.0...v1.18.0) (2026-11-08)
 
 
