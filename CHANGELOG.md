@@ -1,3 +1,11 @@
+# [1.12.0](https://github.com/quran-th/quran-api/compare/v1.11.0...v1.12.0) (2026-11-08)
+
+
+### Features
+
+* translation audio endpoint and TTS pipeline ([f3e8a89](https://github.com/quran-th/quran-api/commit/f3e8a89e92ce366480602dfed80389b4ed9bdecb))
+* translation audio endpoint and TTS pipeline ([#3](https://github.com/quran-th/quran-api/issues/3)) ([6a16054](https://github.com/quran-th/quran-api/commit/6a1605417e3c8fb627e0525788cf17706954e440))
+
 # [1.11.0](https://github.com/quran-th/quran-api/compare/v1.10.0...v1.11.0) (2026-11-01)
 
 
