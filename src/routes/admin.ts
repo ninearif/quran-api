@@ -1301,7 +1301,10 @@ admin.openapi(
       ]);
       stmts.push(
         c.env.DB.prepare(
-          `INSERT OR REPLACE INTO verse_translations (source_id, surah_number, verse_number, translation_text, is_verified, last_updated) VALUES ${placeholders}`,
+          // Locked rows were corrected by hand and must survive a bulk sync
+          `INSERT INTO verse_translations (source_id, surah_number, verse_number, translation_text, is_verified, last_updated) VALUES ${placeholders}
+           ON CONFLICT(source_id, surah_number, verse_number) DO UPDATE SET translation_text = excluded.translation_text, is_verified = excluded.is_verified, last_updated = excluded.last_updated
+           WHERE verse_translations.is_locked = 0`,
         ).bind(...params),
       );
     }
