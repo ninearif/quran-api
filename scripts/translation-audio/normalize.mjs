@@ -19,6 +19,7 @@ export const PRONUNCIATIONS = [
   ['สุญูด', 'สุหญูด'],
   ['มลาอิกะฮฺ', 'มลาอิก๊ะฮฺ'],
   ['มลาอิกะฮ์', 'มลาอิก๊ะฮฺ'],
+  ['เลวทราม', 'เลวซาม'],
 ]
 
 // Spoken-text rules, applied in this order. The snapshot text is never modified.
