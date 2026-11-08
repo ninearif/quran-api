@@ -914,6 +914,46 @@ interface Mp3QuranAyahTiming {
   end_time: number;
 }
 
+// Quiet window at each ayah boundary, measured offline from the reciter's mp3 by
+// scripts/recitation-pauses/measure.mjs and uploaded to R2. Lets the player keep
+// playing through ayahs the reciter joins in one breath.
+const RECITATION_PAUSES_PREFIX = "recitation-pauses/v1";
+
+interface RecitationPausesFile {
+  audioUrl: string;
+  verses: string[];
+  pauses: [number, number][];
+}
+
+async function loadRecitationPauses(
+  bucket: R2Bucket,
+  reciterId: number,
+  chapter: number,
+  audioUrl: string,
+  verses: { verseKey: string; from: number }[],
+): Promise<[number, number][] | undefined> {
+  // Measured in playback order, which is how the player indexes them
+  const verseKeys = [...verses]
+    .sort((a, b) => a.from - b.from)
+    .map((v) => v.verseKey);
+  try {
+    const obj = await bucket.get(
+      `${RECITATION_PAUSES_PREFIX}/${reciterId}/${chapter}.json`,
+    );
+    if (!obj) return undefined;
+    const file = await obj.json<RecitationPausesFile>();
+    // Stale if the upstream audio or its verse list changed since measuring
+    const matches =
+      file.audioUrl === audioUrl &&
+      file.pauses.length === verseKeys.length &&
+      file.verses.every((k, i) => k === verseKeys[i]);
+    return matches ? file.pauses : undefined;
+  } catch (e) {
+    console.error("recitation pauses unreadable", e);
+    return undefined;
+  }
+}
+
 app.openapi(
   createRoute({
     method: "get",
@@ -989,6 +1029,15 @@ app.openapi(
           );
         }
 
+        const audioUrl = `https://cdn.mp3quran.net/audio/${reciter.audioFolder}/${String(chapter).padStart(3, "0")}.mp3`;
+        const pauses = await loadRecitationPauses(
+          c.env.ASSETS_BUCKET,
+          reciterId,
+          chapter,
+          audioUrl,
+          verses,
+        );
+
         c.header(
           "Cache-Control",
           `public, max-age=${RECITATION_CACHE_SECONDS}, stale-while-revalidate=86400`,
@@ -999,9 +1048,10 @@ app.openapi(
             data: {
               reciterId,
               chapter,
-              audioUrl: `https://cdn.mp3quran.net/audio/${reciter.audioFolder}/${String(chapter).padStart(3, "0")}.mp3`,
+              audioUrl,
               duration: verses[verses.length - 1]!.to,
               verses,
+              pauses,
             },
           },
           200,
@@ -1048,6 +1098,13 @@ app.openapi(
           (s): s is [number, number, number] => s.length === 3,
         ),
       }));
+      const pauses = await loadRecitationPauses(
+        c.env.ASSETS_BUCKET,
+        reciterId,
+        chapter,
+        file.audio_url,
+        verses,
+      );
 
       c.header(
         "Cache-Control",
@@ -1062,6 +1119,7 @@ app.openapi(
             audioUrl: file.audio_url,
             duration: file.duration,
             verses,
+            pauses,
           },
         },
         200,
