@@ -1,3 +1,11 @@
+# [1.16.0](https://github.com/quran-th/quran-api/compare/v1.15.0...v1.16.0) (2026-11-08)
+
+
+### Features
+
+* measured quiet before ayah 1 in recitation timings ([e819c71](https://github.com/quran-th/quran-api/commit/e819c713f904fb70a2c2444bad3467b0a67897b5))
+* measured quiet before ayah 1 in recitation timings ([#10](https://github.com/quran-th/quran-api/issues/10)) ([0871f43](https://github.com/quran-th/quran-api/commit/0871f4387fb0b9135378fab54eebd53abcd88d16))
+
 # [1.15.0](https://github.com/quran-th/quran-api/compare/v1.14.1...v1.15.0) (2026-11-08)
 
 
