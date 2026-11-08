@@ -1,3 +1,17 @@
+# [1.17.0](https://github.com/quran-th/quran-api/compare/v1.16.1...v1.17.0) (2026-11-08)
+
+
+### Bug Fixes
+
+* serve Mishary 37, 78 and 82 from mp3quran, whose audio matches its timings ([55ffa05](https://github.com/quran-th/quran-api/commit/55ffa051168e00a3205dd27003ed66c2e68fc698))
+* serve Mishary 37, 78 and 82 from mp3quran, whose audio matches its timings ([#14](https://github.com/quran-th/quran-api/issues/14)) ([2f124fa](https://github.com/quran-th/quran-api/commit/2f124fa202967743e833867bbe5086ebb86d7b4c))
+
+
+### Features
+
+* read สุญูด with a low tone (สุหญูด) in translation audio ([269def5](https://github.com/quran-th/quran-api/commit/269def5d5a122dc699c06838ab9351130c61df54))
+* read สุญูด with a low tone (สุหญูด) in translation audio ([#13](https://github.com/quran-th/quran-api/issues/13)) ([cf19e33](https://github.com/quran-th/quran-api/commit/cf19e33d1f6ebf0b68f6fc2eccebfff6fbe1c78b))
+
 ## [1.16.1](https://github.com/quran-th/quran-api/compare/v1.16.0...v1.16.1) (2026-11-08)
 
 
