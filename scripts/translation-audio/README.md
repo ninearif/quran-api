@@ -49,7 +49,8 @@ stripped first, then:
 5. **aside-dashes**: En dash or hyphen asides next to Thai letters (" –text- ") become ", ". Hyphens inside names and between digits are kept.
 6. **quotes**: Quote characters (" “ ” ‘ ’ ') and the bullet • are dropped.
 7. **stray-latin**: Latin letters stuck to Thai letters (source typos) are removed. Standalone Latin words are kept.
-8. **cleanup**: Collapse whitespace and repeated commas, remove space before and stray leading or trailing commas, trim.
+8. **pronunciation**: Words the voice mispronounces are respelled from the `PRONUNCIATIONS` list: "กะอฺบะฮฺ" becomes "กะอฺบ๊ะฮฺ". Add a `[written, spoken]` pair there for new cases.
+9. **cleanup**: Collapse whitespace and repeated commas, remove space before and stray leading or trailing commas, trim.
 
 ## Hash and resume
 

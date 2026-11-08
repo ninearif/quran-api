@@ -12,6 +12,12 @@ const ARABIC_THEN_MEANING = new RegExp(`[(\\[\\u201C"]?\\s*\\.*\\s*${AR}+(?:\\s+
 const THAI = '[\\u0E00-\\u0E7F]'
 const QUOTES = /["\u201C\u201D'\u2018\u2019\u2022]/g
 
+// Respellings for words the TTS voice mispronounces: [written, spoken]. Matched as substrings,
+// since Thai has no spaces between words.
+export const PRONUNCIATIONS = [
+  ['\u0E01\u0E30\u0E2D\u0E3A\u0E1A\u0E30\u0E2E\u0E3A', '\u0E01\u0E30\u0E2D\u0E3A\u0E1A\u0E4A\u0E30\u0E2E\u0E3A'],
+]
+
 // Spoken-text rules, applied in this order. The snapshot text is never modified.
 export const RULES = [
   {
@@ -49,6 +55,11 @@ export const RULES = [
     id: 'stray-latin',
     description: 'Latin letters stuck to Thai letters (source typos) are removed. Standalone Latin words are kept.',
     apply: (t) => t.replace(new RegExp(`(?<=${THAI})[A-Za-z]+|[A-Za-z]+(?=${THAI})`, 'g'), ''),
+  },
+  {
+    id: 'pronunciation',
+    description: 'Words the voice mispronounces are respelled from the PRONUNCIATIONS list: "กะอฺบะฮฺ" becomes "กะอฺบ๊ะฮฺ".',
+    apply: (t) => PRONUNCIATIONS.reduce((s, [written, spoken]) => s.replaceAll(written, spoken), t),
   },
   {
     id: 'cleanup',
