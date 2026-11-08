@@ -1,3 +1,11 @@
+## [1.12.1](https://github.com/quran-th/quran-api/compare/v1.12.0...v1.12.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* lock hand-corrected translations against source sync; correct Mukhtasar 1:3 ([2376cdc](https://github.com/quran-th/quran-api/commit/2376cdcff2047697f5aa6bd8e2efc945716a550d))
+* lock hand-corrected translations; correct Mukhtasar 1:3 ([#2](https://github.com/quran-th/quran-api/issues/2)) ([624b691](https://github.com/quran-th/quran-api/commit/624b6910a936fe9af5c35a806739bb8ca9b3063f))
+
 # [1.12.0](https://github.com/quran-th/quran-api/compare/v1.11.0...v1.12.0) (2026-11-08)
 
 
