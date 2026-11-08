@@ -41,6 +41,8 @@ const SEARCH_MS = 500
 const MIN_RUN_MS = 60
 // Bump when the measuring changes; older files then count as stale and are measured again
 const ALGO_VERSION = 2
+// How far before ayah 1's `from` its preceding quiet may end (see headQuiet)
+const HEAD_LOOKBACK_MS = 1000
 // A quiet run this long after the last ayah's `to` counts as the end of the recitation
 const TAIL_MIN_PAUSE_MS = 300
 // Quiet = 20 dB under the speech level (p98), but at least 8 dB above the noise floor (p5),
@@ -83,9 +85,10 @@ async function download(url, file) {
 }
 
 /** Mono 16 kHz PCM as Int16Array. */
-function decode(file) {
+function decode(file, maxSeconds) {
   return new Promise((resolve, reject) => {
-    const ff = spawn('ffmpeg', ['-v', 'error', '-i', file, '-ac', '1', '-ar', String(SAMPLE_RATE), '-f', 's16le', '-'])
+    const limit = maxSeconds ? ['-t', String(maxSeconds)] : []
+    const ff = spawn('ffmpeg', ['-v', 'error', ...limit, '-i', file, '-ac', '1', '-ar', String(SAMPLE_RATE), '-f', 's16le', '-'])
     const chunks = []
     let err = ''
     ff.stdout.on('data', (c) => chunks.push(c))
@@ -180,7 +183,37 @@ async function readExisting(out) {
   }
 }
 
-/** Returns [status, detail]; status is new, stale, forced or unchanged. */
+/**
+ * The quiet just before ayah 1's voice: the quiet run containing its `from`, else the last one
+ * ending at or before `from` within HEAD_LOOKBACK_MS. mp3quran's `from` can sit ~500 ms after the
+ * voice starts; looking back further would walk through a basmala read straight into ayah 1.
+ * null when there is none, and the player then falls back to a fixed lead before `from`.
+ */
+function headQuiet(runs, from) {
+  const containing = runs.find(([s, e]) => s <= from && from <= e)
+  if (containing) return containing
+  const before = runs.filter(([, e]) => e <= from && e >= from - HEAD_LOOKBACK_MS)
+  return before.length ? before[before.length - 1] : null
+}
+
+/** Readers (the API upload, a concurrent run) never see a half-written file. */
+async function writeAtomic(file, data) {
+  await mkdir(path.dirname(file), { recursive: true })
+  const tmp = `${file}.${process.pid}.tmp`
+  await writeFile(tmp, data)
+  await rename(tmp, file)
+}
+
+/** Adds `head` to a file measured before it existed: only the first seconds are decoded. */
+async function addHead(existing, timings, verses, out) {
+  const from = verses[0].from
+  const db = levels(await decode(timings.audioUrl, Math.ceil((from + HEAD_LOOKBACK_MS) / 1000) + 2))
+  existing.head = headQuiet(quietRuns(db, existing.levelsDb.threshold), from)
+  await writeAtomic(out, JSON.stringify(existing))
+  return existing.head ? `head ${existing.head[0]}-${existing.head[1]} (ayah 1 from ${from})` : `no quiet before ayah 1 (from ${from})`
+}
+
+/** Returns [status, detail]; status is new, stale, forced, head or unchanged. */
 async function measure(reciterId, chapter) {
   const out = path.join(outRoot, String(reciterId), `${chapter}.json`)
   const timings = await fetchJson(`${api}/recitations/${reciterId}/${chapter}/timings`)
@@ -188,7 +221,7 @@ async function measure(reciterId, chapter) {
   if (verses.length === 0 || !timings.audioUrl) throw new Error('timings have no audio or ayahs')
   const existing = await readExisting(out)
   if (existing && !args.force && matchesTimings(existing, timings.audioUrl, verses.map((v) => v.verseKey))) {
-    return ['unchanged', '']
+    return 'head' in existing ? ['unchanged', ''] : ['head', await addHead(existing, timings, verses, out)]
   }
   const status = !existing ? 'new' : args.force ? 'forced' : 'stale'
   const audioFile = path.join(cacheRoot, String(reciterId), `${chapter}.mp3`)
@@ -220,8 +253,7 @@ async function analyse(reciterId, chapter, timings, verses, audioFile, out) {
     tail = runs.find(([s, e]) => s >= last.to && (e - s >= TAIL_MIN_PAUSE_MS || e >= fileEnd - HOP_MS)) ?? [fileEnd, fileEnd]
   }
   pauses.push(tail)
-  await mkdir(path.dirname(out), { recursive: true })
-  await writeFile(out, JSON.stringify({
+  await writeAtomic(out, JSON.stringify({
     reciterId,
     chapter,
     audioUrl: timings.audioUrl,
@@ -230,6 +262,7 @@ async function analyse(reciterId, chapter, timings, verses, audioFile, out) {
     levelsDb: { floor: +floor.toFixed(1), speech: +speech.toFixed(1), threshold: +threshold.toFixed(1) },
     verses: verses.map((v) => v.verseKey),
     pauses,
+    head: headQuiet(runs, verses[0].from),
   }))
   if (!args['keep-audio']) await rm(audioFile, { force: true })
   const boundaries = pauses.slice(0, -1)
@@ -254,7 +287,7 @@ const surahs = args.surahs && args.surahs !== true
 console.log(`${reciterIds.length} reciters x ${surahs.length} surahs (${args.surahs ? 'given' : args.all ? 'all' : 'with Thai audio'}), api ${api}`)
 
 const jobs = reciterIds.flatMap((r) => surahs.map((s) => [r, s]))
-const counts = { new: 0, stale: 0, forced: 0, unchanged: 0 }
+const counts = { new: 0, stale: 0, forced: 0, head: 0, unchanged: 0 }
 const failures = []
 await Promise.all(Array.from({ length: concurrency }, async () => {
   for (let job = jobs.shift(); job; job = jobs.shift()) {
@@ -277,7 +310,7 @@ await Promise.all(Array.from({ length: concurrency }, async () => {
     }
   }
 }))
-console.log(`done: ${counts.new} new, ${counts.stale} stale re-measured, ${counts.forced} forced, ${counts.unchanged} unchanged, ${failures.length} failed`)
+console.log(`done: ${counts.new} new, ${counts.stale} stale re-measured, ${counts.forced} forced, ${counts.head} head added, ${counts.unchanged} unchanged, ${failures.length} failed`)
 if (failures.length) {
   console.log(`failed (re-run to retry):\n  ${failures.join('\n  ')}`)
   process.exit(1)

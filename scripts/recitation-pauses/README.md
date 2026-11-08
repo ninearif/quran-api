@@ -58,6 +58,10 @@ them; bumping `ALGO_VERSION` makes the next run re-measure older files.
   before the voice ends.
 - **Output:** `<set>/<reciterId>/<chapter>.json` with `audioUrl`, `verses` (playback order) and
   `pauses: [startMs, endMs][]`, where `pauses.length === verses.length`.
+- **Head:** `head: [startMs, endMs] | null` is the quiet just before ayah 1's voice: the quiet run
+  containing its `from`, else the last one ending within 1 s before it. The player starts ayah 1
+  inside it, because mp3quran's `from` can sit up to ~500 ms after the voice. Files measured before
+  `head` existed get it added on the next run by decoding only the first seconds ("head added").
 
 In the player (`quran-web` `recitationStore.ts`), a window under 300 ms means joined. A real
 stop pauses 200 ms after the voice ends and resumes from the same point.
