@@ -488,6 +488,20 @@ export const RecitationTimingsSchema = z
     audioUrl: z.string().url(),
     duration: z.number().openapi({ description: "Milliseconds" }),
     verses: z.array(RecitationVerseTimingSchema),
+    pauses: z
+      .array(z.tuple([z.number(), z.number()]))
+      .optional()
+      .openapi({
+        description:
+          "Measured quiet window [startMs, endMs] at each boundary verses[i] -> verses[i+1], " +
+          "with a final entry for the quiet after the last ayah (length verses.length). A " +
+          "boundary window shorter than ~300 ms means the ayahs are read joined. Absent when " +
+          "the reciter's audio has not been measured.",
+        example: [
+          [5840, 6120],
+          [11480, 11780],
+        ],
+      }),
   })
   .openapi("RecitationTimings");
 

@@ -38,3 +38,4 @@ pnpm-debug.log*
 # Generated Thai translation audio (never committed)
 scripts/data/translation-audio/
 scripts/data/mukhtasar-th-snapshot.json
+scripts/data/recitation-pauses/
