@@ -17,6 +17,8 @@ const QUOTES = /["\u201C\u201D'\u2018\u2019\u2022]/g
 export const PRONUNCIATIONS = [
   ['ญะฮันนัม', ' Jahannam '],
   ['สุญูด', 'สุหญูด'],
+  ['มลาอิกะฮฺ', 'มลาอิก๊ะฮฺ'],
+  ['มลาอิกะฮ์', 'มลาอิก๊ะฮฺ'],
 ]
 
 // Spoken-text rules, applied in this order. The snapshot text is never modified.
