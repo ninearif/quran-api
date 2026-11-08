@@ -1,3 +1,11 @@
+# [1.14.0](https://github.com/quran-th/quran-api/compare/v1.13.1...v1.14.0) (2026-11-08)
+
+
+### Features
+
+* re-runnable recitation pause sync ([a464d81](https://github.com/quran-th/quran-api/commit/a464d81c390830371523003082edf75094d49ab0))
+* re-runnable recitation pause sync ([#8](https://github.com/quran-th/quran-api/issues/8)) ([cc23fe3](https://github.com/quran-th/quran-api/commit/cc23fe32cb4d2640847c7570dd1029404d85aaf0))
+
 ## [1.13.1](https://github.com/quran-th/quran-api/compare/v1.13.0...v1.13.1) (2026-11-08)
 
 
