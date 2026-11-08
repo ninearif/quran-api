@@ -873,12 +873,15 @@ app.openapi(
     return c.json(
       {
         success: true as const,
-        data: reciters.map(({ id, name, style, hasWordTimings }) => ({
-          id,
-          name,
-          style,
-          hasWordTimings,
-        })),
+        data: reciters.map(
+          ({ id, name, arabicName, style, hasWordTimings }) => ({
+            id,
+            name,
+            arabicName,
+            style,
+            hasWordTimings,
+          }),
+        ),
         defaultReciterId: DEFAULT_RECITER_ID,
       },
       200,
