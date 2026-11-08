@@ -894,6 +894,11 @@ app.openapi(
 // change, so no KV layer is needed.
 
 const RECITATION_CACHE_SECONDS = 604800;
+// Pause measurements are uploaded after the fact, so timings without them must not stick in browsers for a week
+const UNMEASURED_CACHE_SECONDS = 3600;
+
+const timingsCacheControl = (pauses: unknown) =>
+  `public, max-age=${pauses ? RECITATION_CACHE_SECONDS : UNMEASURED_CACHE_SECONDS}, stale-while-revalidate=86400`;
 
 interface QdcAudioFilesResponse {
   audio_files: {
@@ -1038,10 +1043,7 @@ app.openapi(
           verses,
         );
 
-        c.header(
-          "Cache-Control",
-          `public, max-age=${RECITATION_CACHE_SECONDS}, stale-while-revalidate=86400`,
-        );
+        c.header("Cache-Control", timingsCacheControl(pauses));
         return c.json(
           {
             success: true as const,
@@ -1106,10 +1108,7 @@ app.openapi(
         verses,
       );
 
-      c.header(
-        "Cache-Control",
-        `public, max-age=${RECITATION_CACHE_SECONDS}, stale-while-revalidate=86400`,
-      );
+      c.header("Cache-Control", timingsCacheControl(pauses));
       return c.json(
         {
           success: true as const,
