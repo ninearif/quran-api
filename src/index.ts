@@ -1010,10 +1010,17 @@ app.openapi(
       );
     }
 
-    if (reciter.ayahTimingsRead && reciter.audioFolder) {
+    const mp3quran =
+      reciter.ayahTimingsRead && reciter.audioFolder
+        ? { read: reciter.ayahTimingsRead, audioFolder: reciter.audioFolder }
+        : reciter.mp3quranSurahs?.chapters.includes(chapter)
+          ? reciter.mp3quranSurahs
+          : undefined;
+
+    if (mp3quran) {
       try {
         const upstream = await fetch(
-          `https://www.mp3quran.net/api/v3/ayat_timing?surah=${chapter}&read=${reciter.ayahTimingsRead}`,
+          `https://www.mp3quran.net/api/v3/ayat_timing?surah=${chapter}&read=${mp3quran.read}`,
           {
             cf: { cacheTtl: RECITATION_CACHE_SECONDS, cacheEverything: true },
           },
@@ -1042,7 +1049,7 @@ app.openapi(
           );
         }
 
-        const audioUrl = `https://cdn.mp3quran.net/audio/${reciter.audioFolder}/${String(chapter).padStart(3, "0")}.mp3`;
+        const audioUrl = `https://cdn.mp3quran.net/audio/${mp3quran.audioFolder}/${String(chapter).padStart(3, "0")}.mp3`;
         const measured = await loadRecitationPauses(
           c.env.ASSETS_BUCKET,
           reciterId,
