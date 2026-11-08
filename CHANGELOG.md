@@ -1,3 +1,11 @@
+# [1.18.0](https://github.com/quran-th/quran-api/compare/v1.17.0...v1.18.0) (2026-11-08)
+
+
+### Features
+
+* read มลาอิกะฮฺ as มลาอิก๊ะฮฺ in translation audio ([9090308](https://github.com/quran-th/quran-api/commit/9090308cbde0144c6ea67c056181c1445b19b008)), closes [hi#tone](https://github.com/hi/issues/tone)
+* read มลาอิกะฮฺ as มลาอิก๊ะฮฺ in translation audio ([#15](https://github.com/quran-th/quran-api/issues/15)) ([09a4524](https://github.com/quran-th/quran-api/commit/09a45243aa9452ae6eb60bdfde0281582df5bb37))
+
 # [1.17.0](https://github.com/quran-th/quran-api/compare/v1.16.1...v1.17.0) (2026-11-08)
 
 
