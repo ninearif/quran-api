@@ -1,3 +1,11 @@
+## [1.16.1](https://github.com/quran-th/quran-api/compare/v1.16.0...v1.16.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* version the translation audio URL by content; add verify.mjs ([e27df7e](https://github.com/quran-th/quran-api/commit/e27df7e4728fa44cb24e1bb01cb5c8cb06a3f977))
+* version the translation audio URL by content; add verify.mjs ([#12](https://github.com/quran-th/quran-api/issues/12)) ([5be18da](https://github.com/quran-th/quran-api/commit/5be18dabb3d25e6f3f8388120a6c8112f4bac929))
+
 # [1.16.0](https://github.com/quran-th/quran-api/compare/v1.15.0...v1.16.0) (2026-11-08)
 
 
