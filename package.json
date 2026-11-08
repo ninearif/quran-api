@@ -25,6 +25,8 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "verify": "bash scripts/verify-setup.sh",
+    "pauses:measure": "node scripts/recitation-pauses/measure.mjs",
+    "pauses:upload": "node scripts/recitation-pauses/upload.mjs",
     "prepare": "husky"
   },
   "lint-staged": {
