@@ -490,3 +490,35 @@ export const RecitationTimingsSchema = z
     verses: z.array(RecitationVerseTimingSchema),
   })
   .openapi("RecitationTimings");
+
+// ─── Translation audio (Public) ───────────────────────────────────────────────
+
+export const TranslationAudioParamSchema = z.object({
+  chapter: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(114)
+    .openapi({ param: { name: "chapter", in: "path" }, example: 112 }),
+});
+
+export const TranslationAudioSchema = z
+  .object({
+    set: z.string().openapi({ example: "placeholder-kanya" }),
+    chapter: z.number(),
+    audioUrl: z.string().url(),
+    durationMs: z.number(),
+    ayahs: z.array(
+      z.object({
+        ayah: z.number(),
+        startMs: z.number(),
+        endMs: z.number(),
+      }),
+    ),
+    voice: z.object({
+      provider: z.string(),
+      model: z.string(),
+      voiceId: z.string(),
+    }),
+  })
+  .openapi("TranslationAudio");

@@ -28,6 +28,8 @@ import {
   ReciterSchema,
   RecitationTimingsParamSchema,
   RecitationTimingsSchema,
+  TranslationAudioParamSchema,
+  TranslationAudioSchema,
 } from "./openapi/schemas";
 
 type MushafPageEntry = {
@@ -1071,6 +1073,96 @@ app.openapi(
         502,
       );
     }
+  },
+);
+
+// ─── GET /translation-audio/:chapter ─────────────────────────────────────────
+// Thai reading of the Al-Mukhtasar translation: one mp3 per surah plus per-ayah
+// offsets. `current.json` points at the active audio set; the mp3 is streamed
+// straight from the assets host, only the manifest passes through the Worker.
+
+const TRANSLATION_AUDIO_PREFIX = "translation-audio/mukhtasar-th";
+
+interface TranslationAudioManifest {
+  set: string;
+  surah: number;
+  provider: string;
+  model: string;
+  voiceId: string;
+  durationMs: number;
+  ayahs: { ayah: number; startMs: number; endMs: number }[];
+}
+
+app.openapi(
+  createRoute({
+    method: "get",
+    path: "/translation-audio/{chapter}",
+    tags: ["Recitations"],
+    summary: "Get Thai translation audio URL with per-ayah timings",
+    request: {
+      params: TranslationAudioParamSchema,
+    },
+    responses: {
+      200: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: z.literal(true),
+              data: TranslationAudioSchema,
+            }),
+          },
+        },
+        description: "Audio URL and per-ayah offsets",
+      },
+      404: {
+        content: { "application/json": { schema: ErrorSchema } },
+        description: "No translation audio for this surah",
+      },
+    },
+  }),
+  async (c) => {
+    const { chapter } = c.req.valid("param");
+    const notFound = () =>
+      c.json(
+        { success: false as const, message: "Translation audio not found" },
+        404,
+      );
+
+    const pointer = await c.env.ASSETS_BUCKET.get(
+      `${TRANSLATION_AUDIO_PREFIX}/current.json`,
+    );
+    if (!pointer) return notFound();
+    const { set } = await pointer.json<{ set: string }>();
+
+    const manifestObj = await c.env.ASSETS_BUCKET.get(
+      `${TRANSLATION_AUDIO_PREFIX}/${set}/${chapter}.json`,
+    );
+    if (!manifestObj) return notFound();
+    const manifest = await manifestObj.json<TranslationAudioManifest>();
+
+    c.header("Cache-Control", "public, max-age=300");
+    return c.json(
+      {
+        success: true as const,
+        data: {
+          set,
+          chapter,
+          audioUrl: `${c.env.ASSETS_BASE_URL}/${TRANSLATION_AUDIO_PREFIX}/${set}/${chapter}.mp3`,
+          durationMs: manifest.durationMs,
+          ayahs: manifest.ayahs.map(({ ayah, startMs, endMs }) => ({
+            ayah,
+            startMs,
+            endMs,
+          })),
+          voice: {
+            provider: manifest.provider,
+            model: manifest.model,
+            voiceId: manifest.voiceId,
+          },
+        },
+      },
+      200,
+    );
   },
 );
 
