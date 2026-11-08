@@ -276,6 +276,7 @@ export const ReportBodySchema = z
           "missing_words",
           "wrong_translation",
           "footnote_issue",
+          "audio_issue",
         ]),
       )
       .optional()
