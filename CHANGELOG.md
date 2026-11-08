@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/quran-th/quran-api/compare/v1.19.0...v1.20.0) (2026-11-08)
+
+
+### Features
+
+* add 77 mp3quran reciters and Arabic reciter names ([af86d5f](https://github.com/quran-th/quran-api/commit/af86d5fdbe0b8d66a8131bc912c127cec14e2242))
+
 # [1.19.0](https://github.com/quran-th/quran-api/compare/v1.18.0...v1.19.0) (2026-11-08)
 
 
