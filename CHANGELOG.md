@@ -1,3 +1,11 @@
+## [1.14.1](https://github.com/quran-th/quran-api/compare/v1.14.0...v1.14.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* recitation pauses for reciters recorded with echo ([17d03d6](https://github.com/quran-th/quran-api/commit/17d03d6e844c8e0519d6a60de28c27bc082b57e0))
+* recitation pauses for reciters recorded with echo ([#9](https://github.com/quran-th/quran-api/issues/9)) ([bad3af8](https://github.com/quran-th/quran-api/commit/bad3af8bb43656c036d3ae9c150f699f657f816e))
+
 # [1.14.0](https://github.com/quran-th/quran-api/compare/v1.13.1...v1.14.0) (2026-11-08)
 
 
