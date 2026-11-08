@@ -16,6 +16,7 @@ const QUOTES = /["\u201C\u201D'\u2018\u2019\u2022]/g
 // since Thai has no spaces between words. Applied after the Arabic-script removal.
 export const PRONUNCIATIONS = [
   ['ญะฮันนัม', ' Jahannam '],
+  ['สุญูด', 'สุหญูด'],
 ]
 
 // Spoken-text rules, applied in this order. The snapshot text is never modified.
