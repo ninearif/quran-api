@@ -8,6 +8,8 @@ export interface ReciterData {
   ayahTimingsRead?: number;
   /** Path under cdn.mp3quran.net/audio/ holding NNN.mp3 surah files */
   audioFolder?: string;
+  /** Surahs served from mp3quran instead of quran.com, because quran.com's mp3 is a different recording from its timings */
+  mp3quranSurahs?: { read: number; audioFolder: string; chapters: number[] };
 }
 
 /**
@@ -22,6 +24,12 @@ export const reciters: ReciterData[] = [
     name: "Mishari Rashid al-Afasy",
     style: "Murattal",
     hasWordTimings: true,
+    // quran.com's 37, 78 and 82 mp3s line up with only 50-67% of their ayah boundaries (chance level); the other 111 surahs line up with 92-100%
+    mp3quranSurahs: {
+      read: 123,
+      audioFolder: "mishary-alafasy/r1",
+      chapters: [37, 78, 82],
+    },
   },
   {
     id: 2,
