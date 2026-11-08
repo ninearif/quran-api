@@ -928,6 +928,13 @@ interface RecitationPausesFile {
   audioUrl: string;
   verses: string[];
   pauses: [number, number][];
+  // Quiet just before ayah 1's voice; null when the voice runs straight in (older files lack it)
+  head?: [number, number] | null;
+}
+
+interface RecitationPauses {
+  pauses: [number, number][];
+  head?: [number, number];
 }
 
 async function loadRecitationPauses(
@@ -936,7 +943,7 @@ async function loadRecitationPauses(
   chapter: number,
   audioUrl: string,
   verses: { verseKey: string; from: number }[],
-): Promise<[number, number][] | undefined> {
+): Promise<RecitationPauses | undefined> {
   // Measured in playback order, which is how the player indexes them
   const verseKeys = [...verses]
     .sort((a, b) => a.from - b.from)
@@ -952,7 +959,8 @@ async function loadRecitationPauses(
       file.audioUrl === audioUrl &&
       file.pauses.length === verseKeys.length &&
       file.verses.every((k, i) => k === verseKeys[i]);
-    return matches ? file.pauses : undefined;
+    if (!matches) return undefined;
+    return { pauses: file.pauses, head: file.head ?? undefined };
   } catch (e) {
     console.error("recitation pauses unreadable", e);
     return undefined;
@@ -1035,7 +1043,7 @@ app.openapi(
         }
 
         const audioUrl = `https://cdn.mp3quran.net/audio/${reciter.audioFolder}/${String(chapter).padStart(3, "0")}.mp3`;
-        const pauses = await loadRecitationPauses(
+        const measured = await loadRecitationPauses(
           c.env.ASSETS_BUCKET,
           reciterId,
           chapter,
@@ -1043,7 +1051,7 @@ app.openapi(
           verses,
         );
 
-        c.header("Cache-Control", timingsCacheControl(pauses));
+        c.header("Cache-Control", timingsCacheControl(measured));
         return c.json(
           {
             success: true as const,
@@ -1053,7 +1061,8 @@ app.openapi(
               audioUrl,
               duration: verses[verses.length - 1]!.to,
               verses,
-              pauses,
+              pauses: measured?.pauses,
+              head: measured?.head,
             },
           },
           200,
@@ -1100,7 +1109,7 @@ app.openapi(
           (s): s is [number, number, number] => s.length === 3,
         ),
       }));
-      const pauses = await loadRecitationPauses(
+      const measured = await loadRecitationPauses(
         c.env.ASSETS_BUCKET,
         reciterId,
         chapter,
@@ -1108,7 +1117,7 @@ app.openapi(
         verses,
       );
 
-      c.header("Cache-Control", timingsCacheControl(pauses));
+      c.header("Cache-Control", timingsCacheControl(measured));
       return c.json(
         {
           success: true as const,
@@ -1118,7 +1127,8 @@ app.openapi(
             audioUrl: file.audio_url,
             duration: file.duration,
             verses,
-            pauses,
+            pauses: measured?.pauses,
+            head: measured?.head,
           },
         },
         200,

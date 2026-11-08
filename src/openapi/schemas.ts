@@ -502,6 +502,15 @@ export const RecitationTimingsSchema = z
           [11480, 11780],
         ],
       }),
+    head: z
+      .tuple([z.number(), z.number()])
+      .optional()
+      .openapi({
+        description:
+          "Measured quiet window [startMs, endMs] just before ayah 1's voice, so playback can " +
+          "start inside it. Absent when not measured or when the voice runs straight in.",
+        example: [3380, 3860],
+      }),
   })
   .openapi("RecitationTimings");
 
