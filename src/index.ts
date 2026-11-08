@@ -1206,6 +1206,12 @@ app.openapi(
     );
     if (!manifestObj) return notFound();
     const manifest = await manifestObj.json<TranslationAudioManifest>();
+    // Rebuilt audio is uploaded under the same name, and Cloudflare's edge keeps serving the old
+    // bytes to range requests (how players stream), which then no longer match these offsets.
+    // The object's etag in the URL makes every rebuild a new cache key.
+    const audioKey = `${TRANSLATION_AUDIO_PREFIX}/${set}/${chapter}.mp3`;
+    const audioObj = await c.env.ASSETS_BUCKET.head(audioKey);
+    if (!audioObj) return notFound();
 
     c.header("Cache-Control", "public, max-age=300");
     return c.json(
@@ -1214,7 +1220,7 @@ app.openapi(
         data: {
           set,
           chapter,
-          audioUrl: `${c.env.ASSETS_BASE_URL}/${TRANSLATION_AUDIO_PREFIX}/${set}/${chapter}.mp3`,
+          audioUrl: `${c.env.ASSETS_BASE_URL}/${audioKey}?v=${audioObj.etag.slice(0, 12)}`,
           durationMs: manifest.durationMs,
           ayahs: manifest.ayahs.map(({ ayah, startMs, endMs }) => ({
             ayah,
