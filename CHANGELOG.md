@@ -1,3 +1,11 @@
+# [1.13.0](https://github.com/quran-th/quran-api/compare/v1.12.3...v1.13.0) (2026-11-08)
+
+
+### Features
+
+* measured recitation pauses in timings ([3a8e26d](https://github.com/quran-th/quran-api/commit/3a8e26d79e85a5a2d6d57d89811d3fb5febeb0e4))
+* measured recitation pauses in timings ([#6](https://github.com/quran-th/quran-api/issues/6)) ([d4aafde](https://github.com/quran-th/quran-api/commit/d4aafde1c99f1275dc8018a45a2449b89ac566b8))
+
 ## [1.12.3](https://github.com/quran-th/quran-api/compare/v1.12.2...v1.12.3) (2026-11-08)
 
 
