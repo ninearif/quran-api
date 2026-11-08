@@ -39,13 +39,15 @@ const WIN_MS = 30
 const SEARCH_MS = 500
 // Shorter quiet runs are word gaps, not candidates
 const MIN_RUN_MS = 60
+// Bump when the measuring changes; older files then count as stale and are measured again
+const ALGO_VERSION = 2
 // A quiet run this long after the last ayah's `to` counts as the end of the recitation
 const TAIL_MIN_PAUSE_MS = 300
 // Quiet = 20 dB under the speech level (p98), but at least 8 dB above the noise floor (p5),
 // clamped so a nearly silent or heavily compressed file still gets a sane level
 const SPEECH_DROP_DB = 20
 const FLOOR_RISE_DB = 8
-const THRESHOLD_RANGE_DB = [-45, -25]
+const THRESHOLD_RANGE_DB = [-45, -20]
 
 const args = parseArgs()
 const opt = (name, fallback) => (args[name] && args[name] !== true ? String(args[name]) : fallback)
@@ -120,9 +122,16 @@ function percentile(values, p) {
   return sorted[Math.min(sorted.length - 1, Math.floor((p / 100) * sorted.length))]
 }
 
-function quietThreshold(db) {
-  const floor = percentile(db, 5)
-  const speech = percentile(db, 98)
+/**
+ * Levels are taken from the recited span only. The silence before and after a recitation is
+ * true silence, but reciters recorded with echo never get that quiet between ayahs, so a floor
+ * that included it put the threshold below their real pauses (Budair: pauses at -25 dB).
+ */
+function quietThreshold(db, fromMs, toMs) {
+  const span = db.subarray(Math.max(0, Math.floor(fromMs / HOP_MS)), Math.min(db.length, Math.ceil(toMs / HOP_MS)))
+  const levels = span.length >= 100 ? span : db
+  const floor = percentile(levels, 5)
+  const speech = percentile(levels, 98)
   const [lo, hi] = THRESHOLD_RANGE_DB
   return { floor, speech, threshold: Math.min(hi, Math.max(lo, Math.max(speech - SPEECH_DROP_DB, floor + FLOOR_RISE_DB))) }
 }
@@ -156,7 +165,8 @@ function pauseNear(runs, from) {
 
 /** Same test the API applies before serving a file (loadRecitationPauses in src/index.ts). */
 function matchesTimings(file, audioUrl, verseKeys) {
-  return file.audioUrl === audioUrl
+  return file.algo === ALGO_VERSION
+    && file.audioUrl === audioUrl
     && Array.isArray(file.pauses) && file.pauses.length === verseKeys.length
     && Array.isArray(file.verses) && file.verses.length === verseKeys.length
     && file.verses.every((k, i) => k === verseKeys[i])
@@ -197,7 +207,7 @@ async function measure(reciterId, chapter) {
 
 async function analyse(reciterId, chapter, timings, verses, audioFile, out) {
   const db = levels(await decode(audioFile))
-  const { floor, speech, threshold } = quietThreshold(db)
+  const { floor, speech, threshold } = quietThreshold(db, verses[0].from, verses[verses.length - 1].to)
   const runs = quietRuns(db, threshold)
   const pauses = verses.slice(1).map((v) => pauseNear(runs, v.from))
   // Trailing entry: where the last ayah really ends. mp3quran's last `to` can sit seconds
@@ -215,6 +225,7 @@ async function analyse(reciterId, chapter, timings, verses, audioFile, out) {
     reciterId,
     chapter,
     audioUrl: timings.audioUrl,
+    algo: ALGO_VERSION,
     measuredAt: new Date().toISOString(),
     levelsDb: { floor: +floor.toFixed(1), speech: +speech.toFixed(1), threshold: +threshold.toFixed(1) },
     verses: verses.map((v) => v.verseKey),
