@@ -74,18 +74,24 @@ export async function revalidateExternalSource(
 
   const existing = await db
     .prepare(
-      `SELECT verse_number, last_updated
+      `SELECT verse_number, last_updated, is_locked
        FROM verse_translations
        WHERE source_id = ? AND surah_number = ?`,
     )
     .bind(source.id, surahNumber)
-    .all<{ verse_number: number; last_updated: number }>();
+    .all<{ verse_number: number; last_updated: number; is_locked: number }>();
 
   const freshness = new Map<number, number>(
     (existing.results ?? []).map((r) => [r.verse_number, r.last_updated]),
   );
+  const locked = new Set(
+    (existing.results ?? [])
+      .filter((r) => r.is_locked)
+      .map((r) => r.verse_number),
+  );
 
   const toFetch = expectedVerseNumbers.filter((v) => {
+    if (locked.has(v)) return false;
     const lu = freshness.get(v);
     if (lu === undefined) return true;
     return revalidationDays > 0 && lu < cutoff;
@@ -105,7 +111,7 @@ export async function revalidateExternalSource(
 
   const now = Math.floor(Date.now() / 1000);
 
-  // Batch upsert — SQLite supports INSERT OR REPLACE.
+  // Batch upsert that never touches locked rows, even if one was locked mid-run.
   // D1 caps bound parameters at 100 per statement; 5 params/row → max 20 rows.
   const BATCH_SIZE = 16;
   for (let i = 0; i < verses.length; i += BATCH_SIZE) {
@@ -122,9 +128,14 @@ export async function revalidateExternalSource(
     try {
       await db
         .prepare(
-          `INSERT OR REPLACE INTO verse_translations
+          `INSERT INTO verse_translations
            (source_id, surah_number, verse_number, translation_text, is_verified, last_updated)
-           VALUES ${placeholders}`,
+           VALUES ${placeholders}
+           ON CONFLICT(source_id, surah_number, verse_number) DO UPDATE SET
+             translation_text = excluded.translation_text,
+             is_verified = excluded.is_verified,
+             last_updated = excluded.last_updated
+           WHERE verse_translations.is_locked = 0`,
         )
         .bind(...params)
         .run();

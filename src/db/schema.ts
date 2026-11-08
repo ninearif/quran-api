@@ -38,6 +38,10 @@ export const verseTranslations = sqliteTable(
     lastUpdated: integer("last_updated", { mode: "timestamp" }).default(
       sql`(strftime('%s', 'now'))`,
     ),
+    // Hand-corrected rows that external-source refreshes must not overwrite
+    isLocked: integer("is_locked", { mode: "boolean" })
+      .notNull()
+      .default(false),
   },
   (table) => ({
     uniqueIdx: uniqueIndex("idx_vt_unique").on(
