@@ -47,7 +47,10 @@ uploads to the local R2 used by `wrangler dev`.
 
 Each mp3 is decoded to mono 16 kHz. The level is read in dBFS over 30 ms windows every 10 ms.
 The quiet threshold adapts per file: 20 dB under the speech level (p98), but at least 8 dB
-above the noise floor (p5), clamped to −45..−25 dBFS.
+above the noise floor (p5), clamped to −45..−20 dBFS. Both levels come from the recited span only,
+not the silence around it, because reciters recorded with echo never get that quiet between ayahs
+(Budair pauses at about −25 dB against speech at −14). Files record the `algo` version that measured
+them; bumping `ALGO_VERSION` makes the next run re-measure older files.
 
 - **Boundary:** for each boundary, the quiet run of at least 60 ms that contains the next ayah's
   `from`, else the nearest within ±500 ms.
