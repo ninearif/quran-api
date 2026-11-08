@@ -1,3 +1,11 @@
+# [1.15.0](https://github.com/quran-th/quran-api/compare/v1.14.1...v1.15.0) (2026-11-08)
+
+
+### Features
+
+* read ญะฮันนัม as Jahannam in translation audio ([eaec099](https://github.com/quran-th/quran-api/commit/eaec0997b6042b6be87081ea19205ec25ec9b08e))
+* read ญะฮันนัม as Jahannam in translation audio ([#11](https://github.com/quran-th/quran-api/issues/11)) ([eec6a94](https://github.com/quran-th/quran-api/commit/eec6a94bfc9f2b51d05bc3cd95eeecc2ad7325d8))
+
 ## [1.14.1](https://github.com/quran-th/quran-api/compare/v1.14.0...v1.14.1) (2026-11-08)
 
 
