@@ -1,3 +1,11 @@
+## [1.12.3](https://github.com/quran-th/quran-api/compare/v1.12.2...v1.12.3) (2026-11-08)
+
+
+### Bug Fixes
+
+* Mukhtasar 101:1-3 hearts terrified, not excited; lock ([0c59ff1](https://github.com/quran-th/quran-api/commit/0c59ff1d17c2025e769c2faa47c7cf2e9e3113d6))
+* Mukhtasar 101:1-3 wording (ตื่นตระหนก) ([#5](https://github.com/quran-th/quran-api/issues/5)) ([686c462](https://github.com/quran-th/quran-api/commit/686c462ff866186fe1ff095a55da49c4b8ff1d4a))
+
 ## [1.12.2](https://github.com/quran-th/quran-api/compare/v1.12.1...v1.12.2) (2026-11-08)
 
 
