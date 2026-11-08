@@ -1,3 +1,11 @@
+## [1.13.1](https://github.com/quran-th/quran-api/compare/v1.13.0...v1.13.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* cache unmeasured recitation timings for 1 hour ([#7](https://github.com/quran-th/quran-api/issues/7)) ([e93cd8d](https://github.com/quran-th/quran-api/commit/e93cd8d70390b85e48e37a85ff1d835c34827f59))
+* cache unmeasured recitation timings for 1 hour, not 7 days ([f2c6897](https://github.com/quran-th/quran-api/commit/f2c68975870e7b1a822f124b2a92a2edf4e38bb1))
+
 # [1.13.0](https://github.com/quran-th/quran-api/compare/v1.12.3...v1.13.0) (2026-11-08)
 
 
