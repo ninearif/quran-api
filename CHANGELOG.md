@@ -1,3 +1,11 @@
+## [1.20.1](https://github.com/quran-th/quran-api/compare/v1.20.0...v1.20.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* pronounce เลวทราม as เลวซาม in Thai translation audio ([96f4c8e](https://github.com/quran-th/quran-api/commit/96f4c8e116f26e762fe0231a304fb73658652297))
+* pronounce เลวทราม as เลวซาม in Thai translation audio ([#16](https://github.com/quran-th/quran-api/issues/16)) ([472d36c](https://github.com/quran-th/quran-api/commit/472d36ccfb564e225561625686ac76f0cfb5dc9e))
+
 # [1.20.0](https://github.com/quran-th/quran-api/compare/v1.19.0...v1.20.0) (2026-11-08)
 
 
