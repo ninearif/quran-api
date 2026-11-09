@@ -16,6 +16,8 @@ const QUOTES = /["\u201C\u201D'\u2018\u2019\u2022]/g
 // since Thai has no spaces between words. Applied after the Arabic-script removal.
 export const PRONUNCIATIONS = [
   ['ญะฮันนัม', ' Jahannam '],
+  ['ญิน', ' Jin '],
+  ['กัมปนาท', 'กำปะนาด'],
   ['สุญูด', 'สุหญูด'],
   ['มลาอิกะฮฺ', 'มลาอิก๊ะฮฺ'],
   ['มลาอิกะฮ์', 'มลาอิก๊ะฮฺ'],
