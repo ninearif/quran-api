@@ -32,7 +32,9 @@ node scripts/translation-audio/upload.mjs --set placeholder-kanya [--surahs 1,11
 node scripts/translation-audio/upload.mjs --set v1 --remote --i-have-approval [--make-current]
 
 # 7. Verify what readers get: streams each surah like the player (API URL + range requests) and
-#    checks every ayah starts on its lead-in silence. Run after every production upload.
+#    checks every ayah starts on its lead-in silence. With the set built locally it also checks
+#    the timings: no clip newer than its surah's build, and the API's offsets equal to the build's.
+#    Run after every production upload.
 node scripts/translation-audio/verify.mjs [--surahs 78,101]
 
 # Voices and models (needs the key)
